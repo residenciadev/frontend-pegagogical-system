@@ -4773,7 +4773,7 @@ hmac-drbg@^1.0.0:
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.1"
 
-hoist-non-react-statics@^3.1.0, hoist-non-react-statics@^3.2.1:
+hoist-non-react-statics@^3.1.0, hoist-non-react-statics@^3.2.1, hoist-non-react-statics@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-3.3.0.tgz#b09178f0122184fb95acf525daaecb4d8f45958b"
   integrity sha512-0XsbTXxgiaCDYDIWFcwkmerZPSwywfUqYmwT4jzewKTQSWoE6FCMoUVOeBJWK3E/CrWbxRG3m5GzY4lnIwGRBA==
@@ -8412,6 +8412,11 @@ react-app-polyfill@^1.0.2:
     regenerator-runtime "0.13.3"
     whatwg-fetch "3.0.0"
 
+react-circular-progressbar@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/react-circular-progressbar/-/react-circular-progressbar-2.0.2.tgz#8fa5fc4cb5e07dfe4036ade8695ba125742f4de4"
+  integrity sha512-o0xpWnW53LAOmyvk3HpzxcUbysYpOVZJ9sm3kHTLBd10Mryev42eq2Q1UjayaBPkvNHtlcbtjDm4xOCI/4WxQQ==
+
 react-dev-utils@^9.0.3:
   version "9.0.3"
   resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-9.0.3.tgz#7607455587abb84599451460eb37cef0b684131a"
@@ -8474,7 +8479,7 @@ react-icons@^3.7.0:
   dependencies:
     camelcase "^5.0.0"
 
-react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6:
+react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6, react-is@^16.9.0:
   version "16.9.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.9.0.tgz#21ca9561399aad0ff1a7701c01683e8ca981edcb"
   integrity sha512-tJBzzzIgnnRfEm046qRcURvwQnZVXmuCbscxUO5RWrGTXpon2d4c8mI0D8WE6ydVIm29JiLB6+RslkIvym9Rjw==
@@ -8483,6 +8488,18 @@ react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
+
+react-redux@^7.1.1:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.1.1.tgz#ce6eee1b734a7a76e0788b3309bf78ff6b34fa0a"
+  integrity sha512-QsW0vcmVVdNQzEkrgzh2W3Ksvr8cqpAv5FhEk7tNEft+5pp7rXxAudTz3VOPawRkLIepItpkEIyLcN/VVXzjTg==
+  dependencies:
+    "@babel/runtime" "^7.5.5"
+    hoist-non-react-statics "^3.3.0"
+    invariant "^2.2.4"
+    loose-envify "^1.4.0"
+    prop-types "^15.7.2"
+    react-is "^16.9.0"
 
 react-router-dom@^5.0.1:
   version "5.0.1"

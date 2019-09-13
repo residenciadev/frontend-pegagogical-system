@@ -1,8 +1,12 @@
 import styled from 'styled-components';
+import Background from '../../../assets/background.jpg';
 
 export const Wrapper = styled.div`
   height: 100%;
-  background-color: #2196f3;
+  /* background-color: #2196f3; */
+  background: url(${Background}) no-repeat;
+  background-size: cover;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -66,6 +70,9 @@ export const Content = styled.div`
   }
   .email {
     margin-bottom: 24px;
+  }
+  .token {
+    mari
   }
 
   @media (max-width: 425px) {

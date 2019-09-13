@@ -87,8 +87,12 @@ const useStyles = makeStyles(theme => ({
     },
   },
   app: {
-    backgroundColor: '#2196f3',
     boxShadow: 'none',
+    background: [
+      theme.palette.type === 'dark'
+        ? theme.palette.primary.dark
+        : theme.palette.primary,
+    ],
   },
 }));
 
