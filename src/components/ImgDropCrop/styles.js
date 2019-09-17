@@ -8,7 +8,7 @@ const dragReject = css`
 `;
 
 const backgroundColor = {
-  default: '#999',
+  default: '#F4F4F4',
   download: 'aliceblue',
   thumbnail: 'ghostwhite',
 };
@@ -32,7 +32,7 @@ export const DropContainer = styled.div.attrs({
 `;
 
 const messageColors = {
-  default: '#999',
+  default: '#000',
   error: '#e57878',
   success: '#78e5d5',
 };

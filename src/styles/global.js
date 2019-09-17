@@ -15,12 +15,13 @@ export default createGlobalStyle`
 }
 html,body, #root{
     height:100%;
+    
 }
 
 body{
     text-rendering: optimizeLegibility ;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;    
+    -moz-osx-font-smoothing: grayscale;  
     
 }
 small{

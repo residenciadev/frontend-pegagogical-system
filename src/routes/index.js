@@ -10,6 +10,7 @@ import Profile from '../pages/Profile';
 import Dashboard from '../pages/Dashboard';
 import Subpasta from '../pages/Subpasta';
 import Users from '../pages/Users';
+import Lessons from '../pages/Lessons';
 
 export default function Routes() {
   return (
@@ -18,6 +19,7 @@ export default function Routes() {
       <Route path="/forgotpassword" component={ForgotPassword} />
       <Route path="/resetpassword" component={ResetPassword} />
       <Route path="/dashboard" component={Dashboard} isPrivate />
+      <Route path="/new-lessons" component={Lessons} isPrivate />
       <Route path="/subpasta/:id/:title" component={Subpasta} isPrivate />
       <Route path="/profile" component={Profile} isPrivate />
       <Route path="/users" component={Users} isPrivate />

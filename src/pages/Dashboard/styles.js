@@ -68,12 +68,12 @@ export const ModalContainer = styled.div`
 `;
 
 export const Wrapper = styled.div`
-  display: flex;
+  /* display: flex;
   width: 100%;
   flex-wrap: wrap;
   flex: 1;
 
-  button {
+  /* button {
     width: 200px;
     min-width: 224px;
     margin: 10px;
@@ -92,14 +92,14 @@ export const Wrapper = styled.div`
     span {
       text-transform: initial;
       color: black;
-    }
+    } */
   }
 
-  .btn-active {
+  /* .btn-active {
     background-color: rgba(63, 81, 181, 0.08);
     color: #fff;
-  }
-
+  } */
+/* 
   @media (max-width: 768px) {
     justify-content: flex-start;
     align-items: stretch;
@@ -108,7 +108,7 @@ export const Wrapper = styled.div`
     button {
       margin: 10px 8px;
     }
-  }
+  } */ 
 `;
 
 export const ButtonFolder = materialStyle(Button)({

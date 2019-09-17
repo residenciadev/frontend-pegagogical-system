@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -11,7 +11,6 @@ import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import EmojiObjectsOutlined from '@material-ui/icons/EmojiObjectsOutlined';
-import EmojiObjectsSharp from '@material-ui/icons/EmojiObjectsSharp';
 import { Link } from 'react-router-dom';
 import storage from 'redux-persist/lib/storage';
 import useReactRouter from 'use-react-router';
@@ -91,7 +90,7 @@ const useStyles = makeStyles(theme => ({
     background: [
       theme.palette.type === 'dark'
         ? theme.palette.primary.dark
-        : theme.palette.primary,
+        : theme.palette.primary.light,
     ],
   },
 }));
@@ -101,11 +100,8 @@ export default function PrimarySearchAppBar() {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
-  const { history, match } = useReactRouter();
-
-  const [values, setValues] = useState({
-    search: '',
-  });
+  const { history } = useReactRouter();
+  const data = useSelector(state => state.user.profile);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -176,6 +172,7 @@ export default function PrimarySearchAppBar() {
       <MenuItem onClick={handleLeave}>Sair</MenuItem>
     </Menu>
   );
+
   return (
     <div className={classes.grow}>
       <AppBar position="static" color="primary" className={classes.app}>
@@ -196,7 +193,7 @@ export default function PrimarySearchAppBar() {
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
             <Typography className={classes.titleUser} variant="h6" noWrap>
-              Usuário
+              {data.map(profile => profile.name)}
             </Typography>
             <IconButton
               edge="end"

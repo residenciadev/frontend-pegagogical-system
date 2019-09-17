@@ -14,8 +14,6 @@ import theme from './styles/theme';
 function App() {
   const { loading } = store.getState().auth;
 
-  console.log(theme);
-
   return (
     <Provider store={store}>
       <PersistGate loading={loading} persistor={persistor}>
