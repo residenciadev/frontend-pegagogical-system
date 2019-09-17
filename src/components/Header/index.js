@@ -3,24 +3,20 @@ import { useDispatch } from 'react-redux';
 
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
-import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import InputBase from '@material-ui/core/InputBase';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MoreIcon from '@material-ui/icons/MoreVert';
+import EmojiObjectsOutlined from '@material-ui/icons/EmojiObjectsOutlined';
+import EmojiObjectsSharp from '@material-ui/icons/EmojiObjectsSharp';
 import { Link } from 'react-router-dom';
 import storage from 'redux-persist/lib/storage';
 import useReactRouter from 'use-react-router';
 
-import Qrcode from '../../assets/qrcodewhite.svg';
-
-import { getSearchRequest } from '../../store/modules/search/actions';
-import { getCategoryRequest } from '../../store/modules/category/actions';
+import { changeThemeRequest } from '../../store/modules/theme/actions';
 
 const useStyles = makeStyles(theme => ({
   grow: {
@@ -35,6 +31,10 @@ const useStyles = makeStyles(theme => ({
       display: 'block',
     },
     color: '#fff',
+    alignSelf: 'center',
+  },
+  titleUser: {
+    alignSelf: 'center',
   },
   search: {
     position: 'relative',
@@ -110,6 +110,11 @@ export default function PrimarySearchAppBar() {
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
+  function handleChangeTheme(event) {
+    dispatch(changeThemeRequest());
+    history.go('/');
+  }
+
   function handleProfileMenuOpen(event) {
     setAnchorEl(event.currentTarget);
   }
@@ -127,28 +132,8 @@ export default function PrimarySearchAppBar() {
     setMobileMoreAnchorEl(event.currentTarget);
   }
   function handleLeave() {
-    storage.removeItem('persist:qrcode');
+    storage.removeItem('persist:pedagogical');
     history.go('/signIn');
-  }
-  const handleChange = name => event => {
-    setValues({ ...values, [name]: event.target.value });
-  };
-
-  function handleSearch(e) {
-    e.preventDefault();
-    const { id } = match.params;
-    const { path } = match;
-    const { search } = values;
-
-    if (id) {
-      dispatch(getSearchRequest('subcategory', search, id));
-    } else if (path.indexOf('/dashboard') === -1) {
-      history.push('/dashboard');
-      dispatch(getSearchRequest('category', search));
-    }
-    if (path.indexOf('/dashboard') !== -1) {
-      dispatch(getSearchRequest('category', search));
-    }
   }
 
   const menuId = 'primary-search-account-menu';
@@ -191,20 +176,6 @@ export default function PrimarySearchAppBar() {
       <MenuItem onClick={handleLeave}>Sair</MenuItem>
     </Menu>
   );
-
-  function handleBack() {
-    const { search } = values;
-    if (search) {
-      setValues({ search: '' });
-      dispatch(getCategoryRequest());
-    }
-  }
-  const handleKeyPress = event => {
-    if (event.key === 'Enter') {
-      handleSearch(event);
-    }
-  };
-
   return (
     <div className={classes.grow}>
       <AppBar position="static" color="primary" className={classes.app}>
@@ -215,44 +186,26 @@ export default function PrimarySearchAppBar() {
               className={classes.menuButton}
               color="inherit"
               aria-label="open drawer"
-              onClick={handleBack}
-            >
-              <img src={Qrcode} alt="icone qr code" />
-            </IconButton>
+            ></IconButton>
           </Link>
           <Typography className={classes.title} variant="h6" noWrap>
-            <Link
-              to="/dashboard"
-              className={classes.title}
-              onClick={handleBack}
-            >
-              QRCODE
+            <Link to="/dashboard" className={classes.title}>
+              PEDAGÓGICO
             </Link>
           </Typography>
-          {(match.path === '/dashboard' ||
-            match.path === '/subpasta/:id/:title') && (
-            <div className={classes.search}>
-              <InputBase
-                placeholder="Pesquisar…"
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
-                inputProps={{ 'aria-label': 'search' }}
-                value={values.search}
-                onChange={handleChange('search')}
-                onKeyPress={handleKeyPress}
-              />
-
-              <Button size="small" color="inherit" onClick={handleSearch}>
-                <div className={classes.searchIcon}>
-                  <SearchIcon />
-                </div>
-              </Button>
-            </div>
-          )}
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
+            <Typography className={classes.titleUser} variant="h6" noWrap>
+              Usuário
+            </Typography>
+            <IconButton
+              edge="end"
+              aria-label="change Theme"
+              onClick={e => handleChangeTheme(e)}
+              color="inherit"
+            >
+              <EmojiObjectsOutlined />
+            </IconButton>
             <IconButton
               edge="end"
               aria-label="account of current user"
