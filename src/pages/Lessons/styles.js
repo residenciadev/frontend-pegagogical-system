@@ -23,5 +23,6 @@ export const Container = styled.div`
   .content-text {
     max-width: 400px;
     text-align: justify;
+    overflow: hidden;
   }
 `;

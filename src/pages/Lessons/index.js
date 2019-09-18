@@ -9,7 +9,7 @@ import TextField from '@material-ui/core/TextField';
 import { Container } from './styles';
 import ImgDropAndCrop from '../../components/ImgDropCrop';
 import FileList from '../../components/FileList';
-import Editor from '../../components/EditorText';
+
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
@@ -68,7 +68,7 @@ function getStepContent(stepIndex) {
 export default function HorizontalLabelPositionBelowStepper() {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+
   const steps = getSteps();
   const [state, setState] = useState({
     dropbox: true,
@@ -77,9 +77,6 @@ export default function HorizontalLabelPositionBelowStepper() {
 
   const [uploadedFiles, setUploadedFiles] = useState([]);
 
-  function onEditorStateChange(editorState) {
-    setEditorState(editorState);
-  }
   function handleNext() {
     setActiveStep(prevActiveStep => prevActiveStep + 1);
   }
@@ -270,11 +267,10 @@ export default function HorizontalLabelPositionBelowStepper() {
         </div>
         <div className="content-form">
           <div className="content-text">
-            <h1>7. Material Complementar*</h1>
+            <h1>7. Questões*</h1>
           </div>
         </div>
       </Container>
-      <Editor />
 
       <div>
         {activeStep === steps.length ? (
