@@ -2,6 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import './config/reactotronConfig';
+import 'react-quill/dist/quill.snow.css';
 import { Router } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import history from './services/history';

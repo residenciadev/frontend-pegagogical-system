@@ -38,5 +38,8 @@ a{
 body,input,button {
   font-family: "Roboto" , sans-serif;
 }
+.ql-container.ql-snow{
+  height:200px;
+}
 
 `;

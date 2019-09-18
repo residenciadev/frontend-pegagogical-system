@@ -17,7 +17,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
-import PersonIcon from '@material-ui/icons/Person';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
@@ -30,7 +29,6 @@ import FaceIcon from '@material-ui/icons/Face';
 import { toast } from 'react-toastify';
 import formatDate from '../../../utils/formatDate';
 import api from '../../../services/api';
-import { red, yellow, lightBlue } from '@material-ui/core/colors';
 
 import { ModalContainer } from '../styles';
 
@@ -117,15 +115,7 @@ const headCells = [
   },
 ];
 function EnhancedTableHead(props) {
-  const {
-    classes,
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props;
+  const { classes, order, orderBy, onRequestSort } = props;
   const createSortHandler = property => event => {
     onRequestSort(event, property);
   };
