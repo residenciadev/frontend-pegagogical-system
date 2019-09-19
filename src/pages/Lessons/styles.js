@@ -7,14 +7,6 @@ export const Container = styled.div`
   margin-bottom: 24px;
   padding: 0 24px;
 
-  /* display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: flex-start;
-  width: 100%;
-  max-width: 1520px; */
-
   .item {
     padding: 24px 0;
     display: grid;

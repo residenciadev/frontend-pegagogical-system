@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-
+import { uniqueId } from 'lodash';
+import filesize from 'filesize';
+import TextField from '@material-ui/core/TextField';
+import { makeStyles } from '@material-ui/core/styles';
 import { Container } from '../styles';
 import ImgDropAndCrop from '../../../components/ImgDropCrop';
 import FileList from '../../../components/FileList';
 import Question from '../../../components/Question';
-import TextField from '@material-ui/core/TextField';
-import { makeStyles } from '@material-ui/core/styles';
+import api from '../../../services/api';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -14,14 +16,82 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Step02() {
+export default function Step02({
+  uploadedFileSlides,
+  setUploadedFilesSlides,
+  handleDeleteFileDownload,
+}) {
   const classes = useStyles();
   const [state, setState] = useState({
     dropbox: true,
     linkexterno: false,
   });
+  const [uploadedFiles, setUploadedFiles] = useState({
+    slides: [],
+    material: [],
+  });
+  const [values, setValues] = useState({
+    themeLesson: '',
+    competencia: '',
+  });
 
-  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const updateFile = (id, data) => {
+    setUploadedFiles({
+      slides: uploadedFiles.slides.map(uploadedFile => {
+        return id === uploadedFile.id
+          ? { ...uploadedFile, ...data }
+          : uploadedFile;
+      }),
+    });
+  };
+
+  const processUpload = upFile => {
+    const data = new FormData();
+    console.log(upFile);
+    data.append('file', upFile.file, upFile.name);
+
+    api
+      .post('dropbox', data, {
+        onUploadProgress: e => {
+          const progress = parseInt(Math.round((e.loaded * 100) / e.total), 10);
+
+          updateFile(upFile.id, {
+            progress,
+          });
+        },
+      })
+      .then(response => {
+        updateFile(upFile.id, {
+          uploaded: true,
+          id: response.data.id,
+          url: response.data.url,
+        });
+      })
+      .catch(response => {
+        updateFile(upFile.id, {
+          error: true,
+        });
+      });
+  };
+
+  function handleUpload(files, type) {
+    const uploaded = files.map(file => ({
+      file,
+      id: uniqueId(),
+      name: file.name,
+      readableSize: filesize(file.size),
+      preview: URL.createObjectURL(file),
+      progress: 0,
+      uploaded: false,
+      error: false,
+      url: null,
+      type,
+    }));
+    setUploadedFiles({ slides: uploadedFiles.slides.concat(uploaded) });
+    uploaded.forEach(processUpload(uploaded));
+  }
+
+  console.log(uploadedFiles);
   return (
     <Container>
       <ul>
@@ -32,17 +102,20 @@ export default function Step02() {
             <p>Arquivo em pptx</p>
           </div>
           <div className="center-column box">
-            {!!uploadedFiles.length < 1 && state.dropbox && (
+            {!!uploadedFiles.slides.length < 1 && state.dropbox && (
               <ImgDropAndCrop
-                onUpload={() => {}}
+                onUpload={e => handleUpload(e, 'slide')}
                 message="Clique ou arraste aqui para enviar"
-                backgroundColor="download"
-                accept="application/*, image/*, pdf/*"
+                backgroundColor="upload"
+                accept="application/*"
               />
             )}
 
-            {!!uploadedFiles.length && state.dropbox && (
-              <FileList files={() => {}} onDelete={() => {}} />
+            {!!uploadedFiles.slides.length && (
+              <FileList
+                files={uploadedFiles.slides}
+                onDelete={handleDeleteFileDownload}
+              />
             )}
           </div>
         </li>
@@ -62,9 +135,9 @@ export default function Step02() {
               />
             )}
 
-            {!!uploadedFiles.length && state.dropbox && (
+            {/* {!!uploadedFiles.length && state.dropbox && (
               <FileList files={() => {}} onDelete={() => {}} />
-            )}
+            )} */}
           </div>
         </li>
         <li className="item">
@@ -83,9 +156,9 @@ export default function Step02() {
               />
             )}
 
-            {!!uploadedFiles.length && state.dropbox && (
+            {/* {!!uploadedFiles.length && state.dropbox && (
               <FileList files={() => {}} onDelete={() => {}} />
-            )}
+            )} */}
           </div>
         </li>
         <li className="item">
@@ -107,6 +180,7 @@ export default function Step02() {
               multiline
               rows="4"
               className={classes.textField}
+              component="span"
             />
             <div className="divider">
               <p>OU</p>
@@ -120,9 +194,9 @@ export default function Step02() {
               />
             )}
 
-            {!!uploadedFiles.length && state.dropbox && (
+            {/* {!!uploadedFiles.length && state.dropbox && (
               <FileList files={() => {}} onDelete={() => {}} />
-            )}
+            )} */}
           </div>
         </li>
         <li className="question-item">

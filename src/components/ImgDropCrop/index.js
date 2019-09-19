@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Dropzone from 'react-dropzone';
+import CloudUploadOutlined from '@material-ui/icons/CloudUploadOutlined';
 
 import { DropContainer, UploadMessage } from './styles';
 
@@ -8,7 +9,12 @@ export default class ImgDropAndCrop extends Component {
   renderDragMessage = (isDragActive, isDragReject) => {
     const { message } = this.props;
     if (!isDragActive) {
-      return <UploadMessage>{message}</UploadMessage>;
+      return (
+        <>
+          <CloudUploadOutlined color="primary" />
+          <UploadMessage>{message}</UploadMessage>
+        </>
+      );
     }
     if (isDragReject) {
       return <UploadMessage type="error">Arquivo não suportado</UploadMessage>;

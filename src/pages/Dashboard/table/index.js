@@ -431,7 +431,7 @@ export default function EnhancedTable({ data: rows, loadData }) {
       return 'finalizado';
     }
   };
-  console.log(rows);
+
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>

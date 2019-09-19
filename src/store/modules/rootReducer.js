@@ -7,11 +7,13 @@ import subcategory from './subcategory/reducer';
 import qrcode from './qrcode/reducer';
 import search from './search/reducer';
 import theme from './theme/reducer';
+import save from './save/reducer';
 
 const reducers = combineReducers({
   auth,
   user,
   theme,
+  save,
   category,
   subcategory,
   search,

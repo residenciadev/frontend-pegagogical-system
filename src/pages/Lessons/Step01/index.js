@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-import { Container } from '../styles';
 import Select from 'react-select';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
+import { Container } from '../styles';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -12,24 +12,30 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Step01() {
+export default function Step01({
+  modules,
+  values,
+  setValues,
+  lessonsOptions,
+  setLessonsOptions,
+  lessonSelected,
+  setLessonSelected,
+  modulesOptions,
+  setModulesOptions,
+  modulesSelected,
+  setModulesSelected,
+  fixedModules,
+  handleSelectModule,
+  isDisabled,
+  handleSelectLesson,
+  handleChange,
+}) {
   const classes = useStyles();
-  const options = [
-    { value: 'aula-01', label: 'Aula 01' },
-    { value: 'aula-02', label: 'Aula 02' },
-    { value: 'aula-03', label: 'Aula 03' },
-    { value: 'aula-04', label: 'Aula 04' },
-    { value: 'aula-05', label: 'Aula 05' },
-    { value: 'aula-06', label: 'Aula 06' },
-    { value: 'aula-07', label: 'Aula 07' },
-    { value: 'aula-08', label: 'Aula 08' },
-    { value: 'aula-09', label: 'Aula 09' },
-  ];
 
-  const modules = [
-    { value: 'saude-1', label: 'Saúde da Mulher' },
-    { value: 'saude-2', label: 'Saúde Pública' },
-  ];
+  useEffect(() => {
+    fixedModules(modules);
+  }, [fixedModules, modules]);
+
   return (
     <>
       <Container>
@@ -40,12 +46,19 @@ export default function Step01() {
             </div>
             <div className="center-column box">
               <Select
-                className="basic-single"
-                classNamePrefix="select"
+                classNamePrefix="selecione"
                 isSearchable
                 name="color"
-                options={modules}
+                options={modulesOptions}
+                value={modulesSelected}
+                onChange={handleSelectModule}
               />
+              {modulesSelected && (
+                <span>
+                  O módulo selecionado é {modulesSelected.label} do{' '}
+                  <strong>BLOCO - {modulesSelected.block}</strong>{' '}
+                </span>
+              )}
             </div>
           </li>
           <li className="item">
@@ -53,13 +66,19 @@ export default function Step01() {
               <h2>1. Selecione o numero da aula*</h2>
             </div>
             <div className="center-column box">
-              <Select
-                className="basic-single"
-                classNamePrefix="select"
-                isSearchable
-                name="color"
-                options={options}
-              />
+              {
+                <Select
+                  className="basic-single"
+                  classNamePrefix="select"
+                  isDisabled={isDisabled}
+                  isSearchable
+                  name="color"
+                  options={lessonsOptions}
+                  value={lessonSelected}
+                  onChange={handleSelectLesson}
+                  isOptionDisabled={option => option.disabled === true}
+                />
+              }
             </div>
           </li>
           <li className="item">
@@ -77,9 +96,12 @@ export default function Step01() {
                 margin="normal"
                 variant="outlined"
                 inputProps={{ 'aria-label': 'bare' }}
+                rowsMax="1"
+                rows="1"
                 multiline
-                rowsMax="4"
                 fullWidth
+                value={values.themeLesson}
+                onChange={handleChange('themeLesson')}
               />
             </div>
           </li>
@@ -96,9 +118,12 @@ export default function Step01() {
                 label="Competências"
                 variant="outlined"
                 multiline
+                rowsMax="4"
                 rows="4"
                 placeholder="O que o aluno irá aprender com a aula?"
                 className={classes.textField}
+                value={values.competencia}
+                onChange={handleChange('competencia')}
               />
             </div>
           </li>

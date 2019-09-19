@@ -3,8 +3,14 @@ import { createMuiTheme } from '@material-ui/core';
 import { yellow, lightBlue, green } from '@material-ui/core/colors';
 
 const getTheme = () => {
-  const { theme } = JSON.parse(localStorage.getItem('persist:pedagogical'));
-  const mode = JSON.parse(theme);
+  let mode;
+  if (JSON.parse(localStorage.getItem('persist:pedagogical'))) {
+    const { theme } = JSON.parse(localStorage.getItem('persist:pedagogical'));
+    mode = JSON.parse(theme);
+  } else {
+    mode = { theme: 'light' };
+  }
+
   return `${mode.theme}`;
 };
 

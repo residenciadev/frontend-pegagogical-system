@@ -25,6 +25,8 @@ export function* signIn({ payload }) {
       password,
     });
     const { token, user } = response.data;
+    const user2 = user[0];
+    console.log('u', user2);
     yield put(signInSuccess(token.token, user));
     history.push('/');
   } catch (error) {
