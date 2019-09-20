@@ -81,8 +81,8 @@ export default function Lessons() {
   const [modulesSelected, setModulesSelected] = useState();
   const [lessonSelected, setLessonSelected] = useState();
 
-  const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [uploadedFileSlides, setUploadedFileSlides] = useState([]);
+  const [uploadedFiles1, setuploadedFiles1] = useState([]);
+  const [uploadedFiles1lides, setuploadedFiles1lides] = useState([]);
 
   const steps = getSteps();
   const [state, setState] = useState({
@@ -150,7 +150,7 @@ export default function Lessons() {
   function updateFile(id, value, d) {
     const newUp = [{ ...value, ...d }];
 
-    setUploadedFiles(newUp);
+    setuploadedFiles1(newUp);
   }
 
   function processUpload(file, type) {
@@ -198,13 +198,13 @@ export default function Lessons() {
       url: null,
     }));
 
-    setUploadedFiles(uploaded);
-    processUpload(uploaded, type);
+    setuploadedFiles1(uploaded);
+    processUpload(uploaded.file, type);
   }
 
   const handleDeleteFileDownload = async id => {
     await api.delete(`dropbox/${id}`);
-    setUploadedFiles([]);
+    setuploadedFiles1([]);
   };
 
   function getStepContent(stepIndex) {
@@ -234,10 +234,10 @@ export default function Lessons() {
       case 1:
         return (
           <Step02
-            uploadedFileSlides={uploadedFileSlides}
+            uploadedFiles1lides={uploadedFiles1lides}
             handleUpload={handleUpload}
             handleDeleteFileDownload={handleDeleteFileDownload}
-            uploadedFiles={uploadedFiles}
+            uploadedFiles1={uploadedFiles1}
           />
         );
       case 2:

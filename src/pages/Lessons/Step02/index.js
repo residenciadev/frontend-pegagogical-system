@@ -35,19 +35,28 @@ export default function Step02({
     competencia: '',
   });
 
-  const updateFile = (id, data) => {
-    setUploadedFiles({
-      slides: uploadedFiles.slides.map(uploadedFile => {
-        return id === uploadedFile.id
-          ? { ...uploadedFile, ...data }
-          : uploadedFile;
-      }),
-    });
-  };
+  function updateFile(id, data, d) {
+    // setUploadedFiles({
+    //   slides: uploadedFiles.slides.map(uploadedFile => {
+    //     return id === uploadedFile.id
+    //       ? { ...uploadedFile, ...data, ...d }
+    //       : data;
+    //   }),
+    // });
+    console.log('d', data);
+    // const newUp = [{ ...data, ...d }];
 
-  const processUpload = upFile => {
+    // setUploadedFiles({
+    //   ...uploadedFiles,
+    //   slides: uploadedFiles.slides.map(uploadedFile => {
+    //     return id === uploadedFile.id ? newUp : uploadedFile;
+    //   }),
+    // });
+  }
+
+  function processUpload(upFile, type) {
     const data = new FormData();
-    console.log(upFile);
+    console.log('a', uploadedFiles);
     data.append('file', upFile.file, upFile.name);
 
     api
@@ -55,24 +64,25 @@ export default function Step02({
         onUploadProgress: e => {
           const progress = parseInt(Math.round((e.loaded * 100) / e.total), 10);
 
-          updateFile(upFile.id, {
+          updateFile(upFile.id, upFile, {
             progress,
           });
         },
       })
       .then(response => {
-        updateFile(upFile.id, {
+        updateFile(upFile.id, upFile, {
           uploaded: true,
           id: response.data.id,
           url: response.data.url,
+          type,
         });
       })
       .catch(response => {
-        updateFile(upFile.id, {
+        updateFile(upFile.id, upFile, {
           error: true,
         });
       });
-  };
+  }
 
   function handleUpload(files, type) {
     const uploaded = files.map(file => ({
@@ -87,11 +97,12 @@ export default function Step02({
       url: null,
       type,
     }));
-    setUploadedFiles({ slides: uploadedFiles.slides.concat(uploaded) });
-    uploaded.forEach(processUpload(uploaded));
+    setUploadedFiles({
+      slides: uploadedFiles.slides.concat(uploaded),
+    });
+    uploaded.forEach(e => processUpload(e, type));
   }
-
-  console.log(uploadedFiles);
+  console.log('slides', uploadedFiles);
   return (
     <Container>
       <ul>
@@ -102,9 +113,9 @@ export default function Step02({
             <p>Arquivo em pptx</p>
           </div>
           <div className="center-column box">
-            {!!uploadedFiles.slides.length < 1 && state.dropbox && (
+            {!!uploadedFiles.slides.length < 5 && state.dropbox && (
               <ImgDropAndCrop
-                onUpload={e => handleUpload(e, 'slide')}
+                onUpload={e => handleUpload(e, 'slides')}
                 message="Clique ou arraste aqui para enviar"
                 backgroundColor="upload"
                 accept="application/*"
