@@ -147,61 +147,6 @@ export default function Lessons() {
     setValues({ ...values, [name]: event.target.value });
   };
 
-  function updateFile(id, value, d) {
-    const newUp = [{ ...value, ...d }];
-
-    setuploadedFiles1(newUp);
-  }
-
-  function processUpload(file, type) {
-    const formdata = new FormData();
-
-    formdata.append('file', file[0].file, file[0].name);
-
-    api
-      .post('dropbox', formdata, {
-        onUploadProgress: e => {
-          const progress = parseInt(Math.round((e.loaded * 100) / e.total), 10);
-
-          updateFile(file[0].id, file[0], {
-            progress,
-          });
-        },
-      })
-      .then(response => {
-        updateFile(file[0].id, file[0], {
-          uploaded: true,
-          id: response.data.id,
-          url: response.data.url,
-          type,
-        });
-        setValues({ ...values, link: response.data.url });
-      })
-      .catch(response => {
-        updateFile(file[0].id, file[0], {
-          error: true,
-        });
-        console.log(response);
-      });
-  }
-
-  function handleUpload(files, type) {
-    const uploaded = files.map(file => ({
-      file,
-      id: uniqueId(),
-      name: file.name,
-      readableSize: filesize(file.size),
-      preview: URL.createObjectURL(file),
-      progress: 0,
-      uploaded: false,
-      error: false,
-      url: null,
-    }));
-
-    setuploadedFiles1(uploaded);
-    processUpload(uploaded.file, type);
-  }
-
   const handleDeleteFileDownload = async id => {
     await api.delete(`dropbox/${id}`);
     setuploadedFiles1([]);
@@ -232,14 +177,7 @@ export default function Lessons() {
           />
         );
       case 1:
-        return (
-          <Step02
-            uploadedFiles1lides={uploadedFiles1lides}
-            handleUpload={handleUpload}
-            handleDeleteFileDownload={handleDeleteFileDownload}
-            uploadedFiles1={uploadedFiles1}
-          />
-        );
+        return <Step02 handleDeleteFileDownload={handleDeleteFileDownload} />;
       case 2:
         return 'Finalize e aguarde a aprovação do pedagógico';
       default:

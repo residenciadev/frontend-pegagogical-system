@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -416,8 +416,10 @@ export default function EnhancedTable({ data: rows, loadData }) {
     if (status === 'finished') {
       return 'green';
     }
+    return 'yellow';
   };
-  const status = status => {
+
+  const correctStatus = status => {
     if (status === 'waiting_for_the_pedagogical') {
       return 'Aguardando pedagógico';
     }
@@ -430,6 +432,7 @@ export default function EnhancedTable({ data: rows, loadData }) {
     if (status === 'finished') {
       return 'finalizado';
     }
+    return status;
   };
 
   return (
@@ -466,7 +469,6 @@ export default function EnhancedTable({ data: rows, loadData }) {
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
-                  console.log(rows);
                   return (
                     <TableRow
                       hover
@@ -522,7 +524,7 @@ export default function EnhancedTable({ data: rows, loadData }) {
                       <TableCell align="left">
                         <Chip
                           className={classes[colorStatus(row.status)]}
-                          label={status(row.status)}
+                          label={correctStatus(row.status)}
                         />
                       </TableCell>
 

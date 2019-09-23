@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { uniqueId } from 'lodash';
 import filesize from 'filesize';
 import TextField from '@material-ui/core/TextField';
@@ -16,11 +16,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Step02({
-  uploadedFileSlides,
-  setUploadedFilesSlides,
-  handleDeleteFileDownload,
-}) {
+export default function Step02({ handleDeleteFileDownload }) {
   const classes = useStyles();
   const [state, setState] = useState({
     dropbox: true,
@@ -35,28 +31,24 @@ export default function Step02({
     competencia: '',
   });
 
-  function updateFile(id, data, d) {
-    // setUploadedFiles({
-    //   slides: uploadedFiles.slides.map(uploadedFile => {
-    //     return id === uploadedFile.id
-    //       ? { ...uploadedFile, ...data, ...d }
-    //       : data;
-    //   }),
-    // });
-    console.log('d', data);
-    // const newUp = [{ ...data, ...d }];
+  const updateFile = useCallback(
+    (id, data) => {
+      const value = uploadedFiles.slides.map(uploadedFile => {
+        return id === uploadedFile.id
+          ? { ...uploadedFile, ...data }
+          : uploadedFile;
+      });
 
-    // setUploadedFiles({
-    //   ...uploadedFiles,
-    //   slides: uploadedFiles.slides.map(uploadedFile => {
-    //     return id === uploadedFile.id ? newUp : uploadedFile;
-    //   }),
-    // });
-  }
+      console.log('value', value);
+      console.log('uploadedFilesOnFunction', uploadedFiles);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [uploadedFiles.slides]
+  );
 
   function processUpload(upFile, type) {
     const data = new FormData();
-    console.log('a', uploadedFiles);
+
     data.append('file', upFile.file, upFile.name);
 
     api
@@ -64,13 +56,13 @@ export default function Step02({
         onUploadProgress: e => {
           const progress = parseInt(Math.round((e.loaded * 100) / e.total), 10);
 
-          updateFile(upFile.id, upFile, {
+          updateFile(upFile.id, {
             progress,
           });
         },
       })
       .then(response => {
-        updateFile(upFile.id, upFile, {
+        updateFile(upFile.id, {
           uploaded: true,
           id: response.data.id,
           url: response.data.url,
@@ -78,7 +70,7 @@ export default function Step02({
         });
       })
       .catch(response => {
-        updateFile(upFile.id, upFile, {
+        updateFile(upFile.id, {
           error: true,
         });
       });
@@ -97,11 +89,16 @@ export default function Step02({
       url: null,
       type,
     }));
-    setUploadedFiles({
+    setUploadedFiles(uploadedFiles => ({
       slides: uploadedFiles.slides.concat(uploaded),
-    });
+    }));
     uploaded.forEach(e => processUpload(e, type));
   }
+
+  // useEffect(() => {
+  //   updateFile();
+  // }, [updateFile, uploadedFiles]);
+
   console.log('slides', uploadedFiles);
   return (
     <Container>

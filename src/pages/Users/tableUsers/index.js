@@ -32,6 +32,10 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import Select from 'react-select';
+
+import Avatar from '@material-ui/core/Avatar';
+import FaceIcon from '@material-ui/icons/Face';
 
 import formatDate from '../../../utils/formatDate';
 import api from '../../../services/api';
@@ -71,6 +75,7 @@ const headCells = [
     disablePadding: true,
     label: '#',
   },
+
   {
     id: 'name',
     numeric: false,
@@ -265,20 +270,35 @@ const useStyles = makeStyles(theme => ({
     top: 20,
     width: 1,
   },
+  name: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  textName: {
+    marginRight: '8px',
+  },
 }));
 
 export default function EnhancedTable({ data: rows, loadData }) {
   const classes = useStyles();
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [order, setOrder] = useState('asc');
+  const [orderBy, setOrderBy] = useState('calories');
+  const [selected, setSelected] = useState([]);
+  const [page, setPage] = useState(0);
+  const [dense, setDense] = useState(false);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [open, setOpen] = useState(false);
   const [modalName, setModalName] = useState('');
   const [modalRemove, setModalRemove] = useState(false);
+
+  const [userSelected, setUserSelected] = useState('');
+
+  const userOptions = [
+    { value: 'teacher', label: 'Professor' },
+    { value: 'pedagogical', label: 'Pedagógico' },
+    { value: 'revision', label: 'Revisão' },
+  ];
 
   const [values, setValues] = useState({
     id: '',
@@ -376,6 +396,10 @@ export default function EnhancedTable({ data: rows, loadData }) {
     setState({ ...state, [name]: event.target.checked });
   };
 
+  function handleSelectType(e) {
+    setUserSelected(e);
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     const { id, name, surname, email, password } = values;
@@ -408,6 +432,23 @@ export default function EnhancedTable({ data: rows, loadData }) {
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
+  const correctUrl = url =>
+    url.substring(0, url.indexOf('?dl=0')).concat('?dl=1');
+
+  const correctType = type => {
+    if (type === 'pedagogical') {
+      return 'Pedagógico';
+    }
+    if (type === 'teacher') {
+      return 'Professor(a)';
+    }
+    if (type === 'revision') {
+      return 'revisão';
+    }
+    return type;
+  };
+
+  console.log(rows);
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -440,6 +481,8 @@ export default function EnhancedTable({ data: rows, loadData }) {
               handleSubmit={handleSubmit}
               state={state}
               handleChangeCheckbox={handleChangeCheckbox}
+              handleSelectType={handleSelectType}
+              setUserSelected={setUserSelected}
             />
             <ModalRemove
               handleModalRemove={handleModalRemove}
@@ -480,8 +523,26 @@ export default function EnhancedTable({ data: rows, loadData }) {
                       >
                         {row.id}
                       </TableCell>
-                      <TableCell align="left">{`${row.name} ${row.surname}`}</TableCell>
+                      <TableCell align="left">
+                        <span className={classes.name}>
+                          {row.dropbox_id ? (
+                            <Avatar
+                              src={correctUrl(row.dropbox.url)}
+                              className={classes.textName}
+                            />
+                          ) : (
+                            <Avatar className={classes.textName}>
+                              <FaceIcon />
+                            </Avatar>
+                          )}
+
+                          {`${row.name} ${row.surname}`}
+                        </span>
+                      </TableCell>
                       <TableCell align="left">{row.email}</TableCell>
+                      <TableCell align="left">
+                        {correctType(row.type)}
+                      </TableCell>
                       <TableCell align="left">
                         {formatDate(row.created_at)}
                       </TableCell>
@@ -557,6 +618,9 @@ function ModalEdit({
   handleSubmit,
   state,
   handleChangeCheckbox,
+  handleSelectType,
+  userSelected,
+  userOptions,
 }) {
   const [modalStyle] = useState(getModalStyle);
   return (
@@ -602,6 +666,15 @@ function ModalEdit({
                 onChange={handleChange('email')}
                 type="email"
                 label="E-mail"
+              />
+              <Select
+                className="basic-single"
+                classNamePrefix="select"
+                isSearchable
+                name="color"
+                options={userOptions}
+                value={userSelected}
+                onChange={handleSelectType}
               />
               <FormControlLabel
                 control={
