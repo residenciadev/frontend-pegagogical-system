@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { makeStyles } from '@material-ui/core/styles';
 import { Content } from './styles';
 import Header from '../../../components/Header';
 
-import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
+    height: '100vh',
     background: [
       theme.palette.type === 'dark' ? theme.palette.background.dark : '#FFF',
     ],

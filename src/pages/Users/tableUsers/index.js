@@ -17,8 +17,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
-import PersonIcon from '@material-ui/icons/Person';
-import FilterListIcon from '@material-ui/icons/FilterList';
+import InputBase from '@material-ui/core/InputBase';
+import SearchIcon from '@material-ui/icons/Search';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 
@@ -87,6 +87,12 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: 'E-mail',
+  },
+  {
+    id: 'type',
+    numeric: false,
+    disablePadding: false,
+    label: 'Tipo',
   },
   {
     id: 'created_at',
@@ -183,21 +189,28 @@ const useToolbarStyles = makeStyles(theme => ({
     flex: '1 1 100%',
   },
   actions: {
+    display: 'flex',
+    flexDirection: 'row-reverse',
     color: theme.palette.text.secondary,
   },
   title: {
     flex: '0 0 auto',
   },
-  align: {
-    display: 'flex',
-    alignItems: 'center',
-    textAlign: 'center',
+  search: {
+    position: 'relative',
   },
 }));
 
 const EnhancedTableToolbar = props => {
   const classes = useToolbarStyles();
-  const { numSelected, onDelete } = props;
+  const {
+    numSelected,
+    onDelete,
+    handleSearch,
+    search,
+    handleChange,
+    handleKeyPress,
+  } = props;
 
   return (
     <Toolbar
@@ -211,12 +224,9 @@ const EnhancedTableToolbar = props => {
             {numSelected} selected
           </Typography>
         ) : (
-          <div className={classes.align}>
-            <PersonIcon />
-            <Typography variant="h6" id="tableTitle">
-              Usuários
-            </Typography>
-          </div>
+          <Typography variant="h6" id="tableTitle">
+            Usuários
+          </Typography>
         )}
       </div>
       <div className={classes.spacer} />
@@ -229,10 +239,22 @@ const EnhancedTableToolbar = props => {
           </Tooltip>
         ) : (
           <Tooltip title="Filter list">
-            <IconButton aria-label="filter list">
-              <FilterListIcon />
+            <IconButton aria-label="filter list" onClick={e => handleSearch(e)}>
+              <SearchIcon />
             </IconButton>
           </Tooltip>
+        )}
+        {numSelected <= 0 && (
+          <>
+            <InputBase
+              className={classes.input}
+              placeholder="Pesquisar..."
+              inputProps={{ 'aria-label': 'Pesquisar' }}
+              value={search.search}
+              onChange={handleChange('search')}
+              onKeyPress={handleKeyPress}
+            />
+          </>
         )}
       </div>
     </Toolbar>
@@ -242,6 +264,12 @@ const EnhancedTableToolbar = props => {
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
   onDelete: PropTypes.func.isRequired,
+  handleSearch: PropTypes.func.isRequired,
+  search: PropTypes.shape({
+    search: PropTypes.string,
+  }).isRequired,
+  handleChange: PropTypes.func.isRequired,
+  handleKeyPress: PropTypes.func.isRequired,
 };
 
 const useStyles = makeStyles(theme => ({
@@ -306,6 +334,8 @@ export default function EnhancedTable({ data: rows, loadData }) {
     surname: '',
     email: '',
     password: '',
+    type: '',
+    search: '',
   });
   const [state, setState] = useState({
     password: false,
@@ -402,10 +432,18 @@ export default function EnhancedTable({ data: rows, loadData }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const { id, name, surname, email, password } = values;
+    const { id, name, surname, email, password, type } = values;
 
     try {
-      if (state.password) {
+      if (state.password && userSelected) {
+        await api.put(`/users/${id}`, {
+          name,
+          surname,
+          email,
+          password,
+          type: userSelected.value,
+        });
+      } else if (state.password) {
         await api.put(`/users/${id}`, {
           name,
           surname,
@@ -413,19 +451,40 @@ export default function EnhancedTable({ data: rows, loadData }) {
           password,
         });
       }
-
+      if (userSelected) {
+        await api.put(`/users/${id}`, {
+          name,
+          surname,
+          email,
+          type: userSelected.value,
+        });
+      }
       await api.put(`/users/${id}`, {
         name,
         surname,
         email,
+        type,
       });
 
       toast.success('Usuário edita com sucesso !');
       handleOpenClose();
+      loadData();
     } catch (error) {
       toast.error('Houve um problema ao editar o Usuário!');
     }
   }
+
+  function handleSearch(e) {
+    e.preventDefault();
+
+    loadData(values.search);
+  }
+
+  const handleKeyPress = event => {
+    if (event.key === 'Enter') {
+      handleSearch(event);
+    }
+  };
 
   const isSelected = name => selected.indexOf(name) !== -1;
 
@@ -448,13 +507,16 @@ export default function EnhancedTable({ data: rows, loadData }) {
     return type;
   };
 
-  console.log(rows);
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar
           numSelected={selected.length}
           onDelete={() => handleModalRemove()}
+          handleSearch={handleSearch}
+          search={values}
+          handleChange={handleChange}
+          handleKeyPress={handleKeyPress}
         />
         <div className={classes.tableWrapper}>
           <Table
@@ -483,6 +545,7 @@ export default function EnhancedTable({ data: rows, loadData }) {
               handleChangeCheckbox={handleChangeCheckbox}
               handleSelectType={handleSelectType}
               setUserSelected={setUserSelected}
+              userOptions={userOptions}
             />
             <ModalRemove
               handleModalRemove={handleModalRemove}
@@ -555,7 +618,8 @@ export default function EnhancedTable({ data: rows, loadData }) {
                               row.id,
                               row.name,
                               row.surname,
-                              row.email
+                              row.email,
+                              row.type
                             )
                           }
                         >
@@ -608,6 +672,27 @@ function getModalStyle() {
   };
 }
 
+const useModalStyles = makeStyles(theme => ({
+  root: {
+    width: '100%',
+    marginTop: theme.spacing(3),
+  },
+  paper: {
+    width: '100%',
+    marginBottom: theme.spacing(2),
+    background: [
+      theme.palette.type === 'dark'
+        ? theme.palette.paper.dark
+        : theme.palette.paper.light,
+    ],
+  },
+  select: {
+    width: '100%',
+    color: '#000',
+    backgroundColor: '#000',
+  },
+}));
+
 function ModalEdit({
   handleOpenClose,
   open,
@@ -623,6 +708,7 @@ function ModalEdit({
   userOptions,
 }) {
   const [modalStyle] = useState(getModalStyle);
+  const classes = useModalStyles();
   return (
     <>
       {/* MODAL - CRIAR PASTA */}
@@ -632,7 +718,7 @@ function ModalEdit({
         open={open}
         onClose={handleOpenClose}
       >
-        <ModalContainer style={modalStyle}>
+        <ModalContainer style={modalStyle} className={classes.paper}>
           <h2 id="simple-modal-title">Cadastrar Usuário</h2>
           <ModalContent>
             <form onSubmit={handleSubmit}>
@@ -668,10 +754,11 @@ function ModalEdit({
                 label="E-mail"
               />
               <Select
-                className="basic-single"
+                className={classes.select}
                 classNamePrefix="select"
                 isSearchable
-                name="color"
+                name="type"
+                defaultValue={values.type}
                 options={userOptions}
                 value={userSelected}
                 onChange={handleSelectType}
@@ -736,6 +823,29 @@ function ModalEdit({
   );
 }
 
+ModalEdit.propTypes = {
+  handleOpenClose: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  values: PropTypes.shape({
+    name: PropTypes.string,
+    surname: PropTypes.string,
+    email: PropTypes.string,
+    type: PropTypes.string,
+    showPassword: PropTypes.string,
+    password: PropTypes.string,
+  }).isRequired,
+  state: PropTypes.shape({
+    password: PropTypes.bool,
+  }).isRequired,
+  handleChange: PropTypes.func.isRequired,
+  handleClickShowPassword: PropTypes.func.isRequired,
+  handleMouseDownPassword: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+  handleChangeCheckbox: PropTypes.func.isRequired,
+  handleSelectType: PropTypes.func.isRequired,
+  userOptions: PropTypes.array.isRequired,
+};
+
 function ModalRemove({
   handleModalRemove,
   modalRemove,
@@ -743,6 +853,7 @@ function ModalRemove({
   handleDelete,
 }) {
   const [modalStyle] = useState(getModalStyle);
+  const classes = useModalStyles();
   return (
     <>
       {/* MODAL - EXCLuir PASTA */}
@@ -752,7 +863,7 @@ function ModalRemove({
         open={modalRemove}
         onClose={handleModalRemove}
       >
-        <ModalContainer style={modalStyle}>
+        <ModalContainer style={modalStyle} className={classes.paper}>
           <h2 id="simple-modal-title">
             Deseja remover esse usuário -{' '}
             <span>
@@ -788,3 +899,10 @@ function ModalRemove({
     </>
   );
 }
+
+ModalRemove.propTypes = {
+  handleModalRemove: PropTypes.func.isRequired,
+  modalRemove: PropTypes.bool.isRequired,
+  modalName: PropTypes.string.isRequired,
+  handleDelete: PropTypes.func.isRequired,
+};
