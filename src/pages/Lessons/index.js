@@ -92,6 +92,12 @@ export default function Lessons() {
 
   const [isDisabled, setIsDisabled] = useState(true);
 
+  console.log(profile);
+
+  useEffect(() => {
+    dispatch(getUserRequest());
+  }, [dispatch]);
+
   const fixedModules = useCallback(
     modules => {
       const obj = modules.map(module => ({
@@ -157,7 +163,7 @@ export default function Lessons() {
       case 0:
         return (
           <Step01
-            modules={profile[0].modules}
+            modules={profile.modules}
             values={values}
             setValues={setValues}
             lessonsOptions={lessonsOptions}
@@ -196,10 +202,6 @@ export default function Lessons() {
   function handleReset() {
     setActiveStep(0);
   }
-
-  useEffect(() => {
-    dispatch(getUserRequest());
-  }, [dispatch]);
 
   return (
     <div className={classes.root}>

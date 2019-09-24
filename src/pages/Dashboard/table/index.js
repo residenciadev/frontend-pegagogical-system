@@ -301,6 +301,12 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.alert.success,
     color: theme.palette.light,
   },
+  label: {
+    maxWidth: '100px',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+  },
 }));
 
 export default function EnhancedTable({ data: rows, loadData }) {
@@ -500,6 +506,7 @@ export default function EnhancedTable({ data: rows, loadData }) {
                       </TableCell>
                       <TableCell align="left">
                         <Chip
+                          classes={{ label: classes.label }}
                           variant="outlined"
                           avatar={
                             row.user.dropbox_id ? (
@@ -511,6 +518,7 @@ export default function EnhancedTable({ data: rows, loadData }) {
                             )
                           }
                           label={row.user.name}
+                          className={classes.textChip}
                         />
                       </TableCell>
                       <TableCell align="left">{row.title}</TableCell>
@@ -570,6 +578,15 @@ export default function EnhancedTable({ data: rows, loadData }) {
     </div>
   );
 }
+
+EnhancedTable.propTypes = {
+  data: PropTypes.array.isRequired,
+  loadData: PropTypes.func,
+};
+
+EnhancedTable.defaultProps = {
+  loadData: () => {},
+};
 
 function getModalStyle() {
   const top = 50;

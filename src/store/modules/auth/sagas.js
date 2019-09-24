@@ -25,9 +25,9 @@ export function* signIn({ payload }) {
       password,
     });
     const { token, user } = response.data;
-    const user2 = user[0];
-    console.log('u', user2);
-    yield put(signInSuccess(token.token, user));
+    const userSpreed = user[0];
+
+    yield put(signInSuccess(token.token, userSpreed));
     history.push('/');
   } catch (error) {
     toast.error('Verifique seu e-mail/senha!');

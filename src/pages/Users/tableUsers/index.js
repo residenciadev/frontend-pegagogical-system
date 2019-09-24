@@ -336,6 +336,8 @@ export default function EnhancedTable({ data: rows, loadData }) {
     password: '',
     type: '',
     search: '',
+    cellphone: '',
+    formation: '',
   });
   const [state, setState] = useState({
     password: false,
@@ -407,9 +409,17 @@ export default function EnhancedTable({ data: rows, loadData }) {
     }
   }
 
-  const handleOpenClose = (id, name, surname, email) => {
+  const handleOpenClose = (id, name, surname, email, cellphone, formation) => {
     setOpen(!open);
-    setValues({ id, name, surname, email, password: '' });
+    setValues({
+      id,
+      name,
+      surname,
+      email,
+      cellphone,
+      formation,
+      password: '',
+    });
   };
 
   const handleChange = name => event => {
@@ -432,7 +442,16 @@ export default function EnhancedTable({ data: rows, loadData }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const { id, name, surname, email, password, type } = values;
+    const {
+      id,
+      name,
+      surname,
+      email,
+      password,
+      type,
+      cellphone,
+      formation,
+    } = values;
 
     try {
       if (state.password && userSelected) {
@@ -442,6 +461,8 @@ export default function EnhancedTable({ data: rows, loadData }) {
           email,
           password,
           type: userSelected.value,
+          cellphone,
+          formation,
         });
       } else if (state.password) {
         await api.put(`/users/${id}`, {
@@ -449,6 +470,8 @@ export default function EnhancedTable({ data: rows, loadData }) {
           surname,
           email,
           password,
+          cellphone,
+          formation,
         });
       }
       if (userSelected) {
@@ -457,6 +480,8 @@ export default function EnhancedTable({ data: rows, loadData }) {
           surname,
           email,
           type: userSelected.value,
+          cellphone,
+          formation,
         });
       }
       await api.put(`/users/${id}`, {
@@ -464,6 +489,8 @@ export default function EnhancedTable({ data: rows, loadData }) {
         surname,
         email,
         type,
+        cellphone,
+        formation,
       });
 
       toast.success('Usuário edita com sucesso !');
@@ -502,7 +529,7 @@ export default function EnhancedTable({ data: rows, loadData }) {
       return 'Professor(a)';
     }
     if (type === 'revision') {
-      return 'revisão';
+      return 'Revisão';
     }
     return type;
   };
@@ -619,7 +646,8 @@ export default function EnhancedTable({ data: rows, loadData }) {
                               row.name,
                               row.surname,
                               row.email,
-                              row.type
+                              row.cellphone,
+                              row.formation
                             )
                           }
                         >
@@ -753,11 +781,34 @@ function ModalEdit({
                 type="email"
                 label="E-mail"
               />
+              <TextField
+                id="outlined-bare-cellphone"
+                fullWidth
+                placeholder="Telefone"
+                margin="normal"
+                inputProps={{ 'aria-label': 'bare' }}
+                value={values.cellphone}
+                onChange={handleChange('cellphone')}
+                type="text"
+                label="Telefone"
+              />
+              <TextField
+                id="outlined-bare-formation"
+                fullWidth
+                placeholder="Graduação"
+                margin="normal"
+                inputProps={{ 'aria-label': 'bare' }}
+                value={values.formation}
+                onChange={handleChange('formation')}
+                type="text"
+                label="Graduação"
+              />
               <Select
                 className={classes.select}
                 classNamePrefix="select"
                 isSearchable
                 name="type"
+                placeholder="Selecione o tipo de usuário caso deseja mudar"
                 defaultValue={values.type}
                 options={userOptions}
                 value={userSelected}
@@ -833,6 +884,8 @@ ModalEdit.propTypes = {
     type: PropTypes.string,
     showPassword: PropTypes.string,
     password: PropTypes.string,
+    formation: PropTypes.string,
+    cellphone: PropTypes.string,
   }).isRequired,
   state: PropTypes.shape({
     password: PropTypes.bool,
@@ -844,6 +897,11 @@ ModalEdit.propTypes = {
   handleChangeCheckbox: PropTypes.func.isRequired,
   handleSelectType: PropTypes.func.isRequired,
   userOptions: PropTypes.array.isRequired,
+  userSelected: PropTypes.func,
+};
+
+ModalEdit.defaultProps = {
+  userSelected: () => {},
 };
 
 function ModalRemove({

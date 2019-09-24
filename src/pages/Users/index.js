@@ -134,7 +134,14 @@ export default function Users() {
 
   const handleOpenClose = () => {
     setOpen(!open);
-    setValues({ name: '', surname: '', email: '', password: '' });
+    setValues({
+      name: '',
+      surname: '',
+      email: '',
+      password: '',
+      cellphone: '',
+      formation: '',
+    });
   };
 
   const handleChange = name => event => {
@@ -161,7 +168,7 @@ export default function Users() {
         surname,
         email,
         password,
-        type,
+        type: type.value,
         cellphone,
         formation,
       });

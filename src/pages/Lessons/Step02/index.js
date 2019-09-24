@@ -89,9 +89,12 @@ export default function Step02({ handleDeleteFileDownload }) {
       url: null,
       type,
     }));
-    setUploadedFiles(uploadedFiles => ({
-      slides: uploadedFiles.slides.concat(uploaded),
-    }));
+    setUploadedFiles(prevState => {
+      return {
+        ...prevState,
+        slides: uploadedFiles.slides.concat(uploaded),
+      };
+    });
     uploaded.forEach(e => processUpload(e, type));
   }
 

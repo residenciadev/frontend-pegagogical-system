@@ -13,7 +13,9 @@ import MoreIcon from '@material-ui/icons/MoreVert';
 import EmojiObjectsOutlined from '@material-ui/icons/EmojiObjectsOutlined';
 import { Link } from 'react-router-dom';
 import storage from 'redux-persist/lib/storage';
+import { Avatar } from '@material-ui/core';
 import useReactRouter from 'use-react-router';
+import correctUrl from '../../utils/correctUrl';
 
 import { changeThemeRequest } from '../../store/modules/theme/actions';
 
@@ -23,6 +25,10 @@ const useStyles = makeStyles(theme => ({
   },
   menuButton: {
     marginRight: theme.spacing(2),
+    display: 'none',
+    [theme.breakpoints.up('sm')]: {
+      display: 'none',
+    },
   },
   title: {
     display: 'none',
@@ -34,6 +40,9 @@ const useStyles = makeStyles(theme => ({
   },
   titleUser: {
     alignSelf: 'center',
+    marginLeft: '8px',
+    cursor: 'pointer',
+    width: '100px',
   },
   search: {
     position: 'relative',
@@ -81,6 +90,7 @@ const useStyles = makeStyles(theme => ({
   },
   sectionMobile: {
     display: 'flex',
+    justifyContent: 'space between',
     [theme.breakpoints.up('md')]: {
       display: 'none',
     },
@@ -93,6 +103,12 @@ const useStyles = makeStyles(theme => ({
         : theme.palette.primary.light,
     ],
   },
+  contentMobileProfile: {
+    display: 'flex',
+  },
+  link: {
+    color: [theme.palette.type === 'dark' ? '#fff' : '#000'],
+  },
 }));
 
 export default function PrimarySearchAppBar() {
@@ -101,7 +117,7 @@ export default function PrimarySearchAppBar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const { history } = useReactRouter();
-  const data = useSelector(state => state.user.profile);
+  const profile = useSelector(state => state.user.profile);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -143,11 +159,13 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>
-        <Link to="/users">Gerenciar usuários</Link>
-      </MenuItem>
+      <Link className={classes.link} to="/users">
+        <MenuItem onClick={handleMenuClose}>Gerenciar usuários</MenuItem>
+      </Link>
+      <Link className={classes.link} to="/profile">
+        <MenuItem onClick={handleMenuClose}>Perfil</MenuItem>
+      </Link>
 
-      {/* <MenuItem onClick={handleMenuClose}>Perfil</MenuItem> */}
       <MenuItem onClick={handleLeave}>Sair</MenuItem>
     </Menu>
   );
@@ -163,27 +181,27 @@ export default function PrimarySearchAppBar() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>
-        <Link to="/users">Gerenciar usuários</Link>
-      </MenuItem>
-      {/* <MenuItem onClick={handleProfileMenuOpen}>
-        <p>Perfil</p>
-      </MenuItem> */}
+      <Link className={classes.link} to="/users">
+        <MenuItem onClick={handleMenuClose}>Gerenciar usuários</MenuItem>
+      </Link>
+      <Link className={classes.link} to="/profile">
+        <MenuItem onClick={handleProfileMenuOpen}>Perfil</MenuItem>
+      </Link>
       <MenuItem onClick={handleLeave}>Sair</MenuItem>
     </Menu>
   );
-
+  console.log(profile);
   return (
     <div className={classes.grow}>
       <AppBar position="static" color="primary" className={classes.app}>
         <Toolbar>
-          <Link to="/dashboard">
+          <Link to="/dashboard" className={classes.menuButton}>
             <IconButton
               edge="start"
               className={classes.menuButton}
               color="inherit"
               aria-label="open drawer"
-            ></IconButton>
+            />
           </Link>
           <Typography className={classes.title} variant="h6" noWrap>
             <Link to="/dashboard" className={classes.title}>
@@ -192,9 +210,6 @@ export default function PrimarySearchAppBar() {
           </Typography>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <Typography className={classes.titleUser} variant="h6" noWrap>
-              {data.map(profile => profile.name)}
-            </Typography>
             <IconButton
               edge="end"
               aria-label="change Theme"
@@ -203,6 +218,15 @@ export default function PrimarySearchAppBar() {
             >
               <EmojiObjectsOutlined />
             </IconButton>
+
+            <Typography
+              className={classes.titleUser}
+              variant="h6"
+              noWrap
+              onClick={handleProfileMenuOpen}
+            >
+              {profile.name}
+            </Typography>
             <IconButton
               edge="end"
               aria-label="account of current user"
@@ -211,9 +235,42 @@ export default function PrimarySearchAppBar() {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <AccountCircle />
+              {profile.dropbox_id ? (
+                <Avatar src={correctUrl(profile.dropbox.url)} />
+              ) : (
+                <Avatar>
+                  <AccountCircle />
+                </Avatar>
+              )}
             </IconButton>
           </div>
+          <div className={classes.sectionMobile} key={profile.id}>
+            <IconButton
+              edge="end"
+              aria-label="account of current user"
+              aria-controls={menuId}
+              aria-haspopup="true"
+              onClick={handleProfileMenuOpen}
+              color="inherit"
+            >
+              {profile.dropbox_id ? (
+                <Avatar src={correctUrl(profile.dropbox.url)} />
+              ) : (
+                <Avatar>
+                  <AccountCircle />
+                </Avatar>
+              )}
+            </IconButton>
+            <Typography
+              className={classes.titleUser}
+              variant="h6"
+              noWrap
+              onClick={handleProfileMenuOpen}
+            >
+              {profile.name}
+            </Typography>
+          </div>
+
           <div className={classes.sectionMobile}>
             <IconButton
               aria-label="show more"
