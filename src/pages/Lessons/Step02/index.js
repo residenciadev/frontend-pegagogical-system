@@ -31,49 +31,55 @@ export default function Step02({ handleDeleteFileDownload }) {
     competencia: '',
   });
 
-  const updateFile = useCallback(
-    (id, data) => {
-      const value = uploadedFiles.slides.map(uploadedFile => {
-        return id === uploadedFile.id
-          ? { ...uploadedFile, ...data }
-          : uploadedFile;
+  const updateFile = (id, data) => {
+    setUploadedFiles(prevState => {
+      const newSlide = prevState.slides.map(slide => {
+        return id === slide.id ? { ...slide, ...data } : slide;
       });
 
-      console.log('value', value);
-      console.log('uploadedFilesOnFunction', uploadedFiles);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [uploadedFiles.slides]
-  );
+      return {
+        ...prevState,
+        slides: newSlide,
+      };
+    });
+  };
 
   function processUpload(upFile, type) {
     const data = new FormData();
 
     data.append('file', upFile.file, upFile.name);
+    try {
+      api
+        .post('dropbox', data, {
+          onUploadProgress: e => {
+            const progress = parseInt(
+              Math.round((e.loaded * 100) / e.total),
+              10
+            );
 
-    api
-      .post('dropbox', data, {
-        onUploadProgress: e => {
-          const progress = parseInt(Math.round((e.loaded * 100) / e.total), 10);
-
+            updateFile(upFile.id, {
+              progress,
+            });
+          },
+        })
+        .then(response => {
           updateFile(upFile.id, {
-            progress,
+            uploaded: true,
+            id: response.data.id,
+            url: response.data.url,
+            type,
           });
-        },
-      })
-      .then(response => {
-        updateFile(upFile.id, {
-          uploaded: true,
-          id: response.data.id,
-          url: response.data.url,
-          type,
+        })
+        .catch(response => {
+          updateFile(upFile.id, {
+            error: true,
+          });
         });
-      })
-      .catch(response => {
-        updateFile(upFile.id, {
-          error: true,
-        });
+    } catch (error) {
+      updateFile(upFile.id, {
+        error: true,
       });
+    }
   }
 
   function handleUpload(files, type) {

@@ -33,7 +33,10 @@ export default function Step01({
   const classes = useStyles();
 
   useEffect(() => {
-    fixedModules(modules);
+    console.log(modules);
+    if (modules) {
+      fixedModules(modules);
+    }
   }, [fixedModules, modules]);
 
   return (

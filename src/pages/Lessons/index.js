@@ -77,7 +77,7 @@ export default function Lessons() {
     { value: 'aula-08', label: 'Aula 08', disabled: false },
     { value: 'aula-09', label: 'Aula 09', disabled: false },
   ]);
-  const [modulesOptions, setModulesOptions] = useState();
+  const [modulesOptions, setModulesOptions] = useState([]);
   const [modulesSelected, setModulesSelected] = useState();
   const [lessonSelected, setLessonSelected] = useState();
 
@@ -97,7 +97,7 @@ export default function Lessons() {
   useEffect(() => {
     dispatch(getUserRequest());
   }, [dispatch]);
-
+  console.log(modulesOptions);
   const fixedModules = useCallback(
     modules => {
       const obj = modules.map(module => ({
