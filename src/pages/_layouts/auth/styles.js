@@ -71,9 +71,6 @@ export const Content = styled.div`
   .email {
     margin-bottom: 24px;
   }
-  .token {
-    mari
-  }
 
   @media (max-width: 425px) {
     height: 100%;
