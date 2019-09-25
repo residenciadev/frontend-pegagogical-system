@@ -81,13 +81,18 @@ export default function Lessons() {
   const [modulesSelected, setModulesSelected] = useState();
   const [lessonSelected, setLessonSelected] = useState();
 
-  const [uploadedFiles1, setuploadedFiles1] = useState([]);
-  const [uploadedFiles1lides, setuploadedFiles1lides] = useState([]);
-
   const steps = getSteps();
   const [state, setState] = useState({
     dropbox: true,
     linkexterno: false,
+  });
+
+  const [uploadedFiles, setUploadedFiles] = useState({
+    slide: [],
+    material: [],
+    images: [],
+    backgroundImages: [],
+    videos: [],
   });
 
   const [isDisabled, setIsDisabled] = useState(true);
@@ -151,10 +156,89 @@ export default function Lessons() {
     setValues({ ...values, [name]: event.target.value });
   };
 
-  const handleDeleteFileDownload = async id => {
+  async function handleDeleteFileDownload(id, type) {
     await api.delete(`dropbox/${id}`);
-    setuploadedFiles1([]);
-  };
+  }
+
+  function handleNext() {
+    setActiveStep(prevActiveStep => prevActiveStep + 1);
+  }
+
+  function handleBack() {
+    setActiveStep(prevActiveStep => prevActiveStep - 1);
+  }
+
+  function handleReset() {
+    setActiveStep(0);
+  }
+
+  function updateFile(id, type, data) {
+    setUploadedFiles(prevState => {
+      const newValue = prevState[type].map(value => {
+        return id === value.id ? { ...value, ...data } : value;
+      });
+
+      return {
+        ...prevState,
+        [type]: newValue,
+      };
+    });
+  }
+
+  function processUpload(upFile, type) {
+    const data = new FormData();
+
+    data.append('file', upFile.file, upFile.name);
+
+    api
+      .post(`dropbox?type=${type}`, data, {
+        onUploadProgress: e => {
+          const progress = parseInt(Math.round((e.loaded * 100) / e.total), 10);
+
+          updateFile(upFile.id, type, {
+            progress,
+          });
+        },
+      })
+      .then(response => {
+        updateFile(upFile.id, type, {
+          uploaded: true,
+          id: response.data.id,
+          url: response.data.url,
+          type,
+        });
+      })
+      .catch(response => {
+        console.log('err', response);
+        updateFile(upFile.id, type, {
+          error: true,
+        });
+      });
+  }
+
+  function handleUpload(files, type) {
+    const uploaded = files.map(file => ({
+      file,
+      id: uniqueId(),
+      name: file.name,
+      readableSize: filesize(file.size),
+      preview: URL.createObjectURL(file),
+      progress: 0,
+      uploaded: false,
+      error: false,
+      url: null,
+      type,
+    }));
+    setUploadedFiles(prevState => {
+      return {
+        ...prevState,
+        [type]: uploadedFiles[type].concat(uploaded),
+      };
+    });
+    uploaded.forEach(e => processUpload(e, type));
+  }
+
+  console.log(uploadedFiles);
 
   function getStepContent(stepIndex) {
     switch (stepIndex) {
@@ -181,24 +265,18 @@ export default function Lessons() {
           />
         );
       case 1:
-        return <Step02 handleDeleteFileDownload={handleDeleteFileDownload} />;
+        return (
+          <Step02
+            handleDeleteFileDownload={handleDeleteFileDownload}
+            handleUpload={handleUpload}
+            uploadedFiles={uploadedFiles}
+          />
+        );
       case 2:
         return 'Finalize e aguarde a aprovação do pedagógico';
       default:
         return 'Uknown stepIndex';
     }
-  }
-
-  function handleNext() {
-    setActiveStep(prevActiveStep => prevActiveStep + 1);
-  }
-
-  function handleBack() {
-    setActiveStep(prevActiveStep => prevActiveStep - 1);
-  }
-
-  function handleReset() {
-    setActiveStep(0);
   }
 
   return (

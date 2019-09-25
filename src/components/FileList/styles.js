@@ -19,6 +19,9 @@ export const FileInfo = styled.div`
   div {
     display: flex;
     flex-direction: column;
+    strong {
+      max-width: 250px;
+    }
     span {
       font-size: 12px;
       color: #999;

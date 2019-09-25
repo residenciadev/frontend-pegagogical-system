@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { uniqueId } from 'lodash';
 import filesize from 'filesize';
 import TextField from '@material-ui/core/TextField';
@@ -16,93 +17,21 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Step02({ handleDeleteFileDownload }) {
+export default function Step02({
+  handleDeleteFileDownload,
+  handleUpload,
+  uploadedFiles,
+}) {
   const classes = useStyles();
   const [state, setState] = useState({
     dropbox: true,
     linkexterno: false,
   });
-  const [uploadedFiles, setUploadedFiles] = useState({
-    slides: [],
-    material: [],
-  });
+
   const [values, setValues] = useState({
     themeLesson: '',
     competencia: '',
   });
-
-  const updateFile = (id, data) => {
-    setUploadedFiles(prevState => {
-      const newSlide = prevState.slides.map(slide => {
-        return id === slide.id ? { ...slide, ...data } : slide;
-      });
-
-      return {
-        ...prevState,
-        slides: newSlide,
-      };
-    });
-  };
-
-  function processUpload(upFile, type) {
-    const data = new FormData();
-
-    data.append('file', upFile.file, upFile.name);
-    try {
-      api
-        .post('dropbox', data, {
-          onUploadProgress: e => {
-            const progress = parseInt(
-              Math.round((e.loaded * 100) / e.total),
-              10
-            );
-
-            updateFile(upFile.id, {
-              progress,
-            });
-          },
-        })
-        .then(response => {
-          updateFile(upFile.id, {
-            uploaded: true,
-            id: response.data.id,
-            url: response.data.url,
-            type,
-          });
-        })
-        .catch(response => {
-          updateFile(upFile.id, {
-            error: true,
-          });
-        });
-    } catch (error) {
-      updateFile(upFile.id, {
-        error: true,
-      });
-    }
-  }
-
-  function handleUpload(files, type) {
-    const uploaded = files.map(file => ({
-      file,
-      id: uniqueId(),
-      name: file.name,
-      readableSize: filesize(file.size),
-      preview: URL.createObjectURL(file),
-      progress: 0,
-      uploaded: false,
-      error: false,
-      url: null,
-      type,
-    }));
-    setUploadedFiles(prevState => {
-      return {
-        ...prevState,
-        slides: uploadedFiles.slides.concat(uploaded),
-      };
-    });
-    uploaded.forEach(e => processUpload(e, type));
-  }
 
   return (
     <Container>
@@ -114,19 +43,19 @@ export default function Step02({ handleDeleteFileDownload }) {
             <p>Arquivo em pptx</p>
           </div>
           <div className="center-column box">
-            {!!uploadedFiles.slides.length < 5 && state.dropbox && (
+            {!!uploadedFiles.slide.length < 5 && state.dropbox && (
               <ImgDropAndCrop
-                onUpload={e => handleUpload(e, 'slides')}
+                onUpload={e => handleUpload(e, 'slide')}
                 message="Clique ou arraste aqui para enviar"
                 backgroundColor="upload"
                 accept="application/*"
               />
             )}
 
-            {!!uploadedFiles.slides.length && (
+            {!!uploadedFiles.slide.length && (
               <FileList
-                files={uploadedFiles.slides}
-                onDelete={handleDeleteFileDownload}
+                files={uploadedFiles.slide}
+                onDelete={e => handleDeleteFileDownload(e, 'slide')}
               />
             )}
           </div>
@@ -138,18 +67,21 @@ export default function Step02({ handleDeleteFileDownload }) {
             <p>Imagens(mínimo de 10) e GIFs</p>
           </div>
           <div className="center-column box">
-            {!!uploadedFiles.length < 1 && state.dropbox && (
+            {!!uploadedFiles.images.length < 10 && state.dropbox && (
               <ImgDropAndCrop
-                onUpload={() => {}}
+                onUpload={e => handleUpload(e, 'images')}
                 message="Clique ou arraste aqui para enviar"
                 backgroundColor="download"
                 accept="application/*, image/*, pdf/*"
               />
             )}
 
-            {/* {!!uploadedFiles.length && state.dropbox && (
-              <FileList files={() => {}} onDelete={() => {}} />
-            )} */}
+            {!!uploadedFiles.images.length && state.dropbox && (
+              <FileList
+                files={uploadedFiles.images}
+                onDelete={e => handleDeleteFileDownload(e, 'images')}
+              />
+            )}
           </div>
         </li>
         <li className="item">
@@ -159,18 +91,21 @@ export default function Step02({ handleDeleteFileDownload }) {
             <p>2 Imagens</p>
           </div>
           <div className="center-column box">
-            {!!uploadedFiles.length < 1 && state.dropbox && (
+            {!!uploadedFiles.backgroundImages.length < 1 && state.dropbox && (
               <ImgDropAndCrop
-                onUpload={() => {}}
+                onUpload={e => handleUpload(e, 'backgroundImages')}
                 message="Clique ou arraste aqui para enviar"
                 backgroundColor="download"
                 accept="application/*, image/*, pdf/*"
               />
             )}
 
-            {/* {!!uploadedFiles.length && state.dropbox && (
-              <FileList files={() => {}} onDelete={() => {}} />
-            )} */}
+            {!!uploadedFiles.backgroundImages.length && state.dropbox && (
+              <FileList
+                files={uploadedFiles.backgroundImages}
+                onDelete={e => handleDeleteFileDownload(e, 'backgroundImages')}
+              />
+            )}
           </div>
         </li>
         <li className="item">
@@ -197,18 +132,21 @@ export default function Step02({ handleDeleteFileDownload }) {
             <div className="divider">
               <p>OU</p>
             </div>
-            {!!uploadedFiles.length < 1 && state.dropbox && (
+            {!!uploadedFiles.videos.length < 1 && state.dropbox && (
               <ImgDropAndCrop
-                onUpload={() => {}}
+                onUpload={e => handleUpload(e, 'videos')}
                 message="Clique ou arraste aqui para enviar"
                 backgroundColor="download"
                 accept="application/*, image/*, pdf/*"
               />
             )}
 
-            {/* {!!uploadedFiles.length && state.dropbox && (
-              <FileList files={() => {}} onDelete={() => {}} />
-            )} */}
+            {!!uploadedFiles.videos.length && state.dropbox && (
+              <FileList
+                files={uploadedFiles.videos}
+                onDelete={e => handleDeleteFileDownload(e, 'videos')}
+              />
+            )}
           </div>
         </li>
         <li className="question-item">
@@ -224,3 +162,16 @@ export default function Step02({ handleDeleteFileDownload }) {
     </Container>
   );
 }
+
+Step02.propTypes = {
+  handleDeleteFileDownload: PropTypes.func.isRequired,
+  handleUpload: PropTypes.func.isRequired,
+  uploadedFiles: PropTypes.shape({
+    length: PropTypes.string,
+    slide: PropTypes.array,
+    material: PropTypes.array,
+    images: PropTypes.array,
+    videos: PropTypes.array,
+    backgroundImages: PropTypes.array,
+  }).isRequired,
+};
