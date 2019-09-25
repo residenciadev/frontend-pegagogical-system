@@ -10,8 +10,6 @@ import {
 export function* getUser({ payload }) {
   const response = yield call(api.get, 'member');
 
-  console.log('d', response.data);
-
   yield put(getUserSuccess(response.data));
 }
 

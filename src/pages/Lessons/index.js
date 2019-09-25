@@ -92,12 +92,10 @@ export default function Lessons() {
 
   const [isDisabled, setIsDisabled] = useState(true);
 
-  console.log(profile);
-
   useEffect(() => {
     dispatch(getUserRequest());
   }, [dispatch]);
-  console.log(modulesOptions);
+
   const fixedModules = useCallback(
     modules => {
       const obj = modules.map(module => ({

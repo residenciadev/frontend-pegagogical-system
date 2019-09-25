@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import { MdCheckCircle, MdError, MdLink } from 'react-icons/md';
 import { Container, FileInfo, Preview } from './styles';
@@ -15,7 +16,7 @@ const FileList = ({ files, onDelete }) => (
               {uploadedFile.readableSize}{' '}
               {!!uploadedFile.url && (
                 <button type="button" onClick={() => onDelete(uploadedFile.id)}>
-                  Exluir
+                  Excluir
                 </button>
               )}
             </span>
@@ -48,5 +49,10 @@ const FileList = ({ files, onDelete }) => (
     ))}
   </Container>
 );
+
+FileList.propTypes = {
+  files: PropTypes.array.isRequired,
+  onDelete: PropTypes.func.isRequired,
+};
 
 export default FileList;

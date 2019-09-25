@@ -190,7 +190,7 @@ export default function PrimarySearchAppBar() {
       <MenuItem onClick={handleLeave}>Sair</MenuItem>
     </Menu>
   );
-  console.log(profile);
+
   return (
     <div className={classes.grow}>
       <AppBar position="static" color="primary" className={classes.app}>

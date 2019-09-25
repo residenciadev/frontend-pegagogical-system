@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { uniqueId } from 'lodash';
 import filesize from 'filesize';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container } from '../styles';
-import ImgDropAndCrop from '../../../components/ImgDropCrop';
+import ImgDropAndCrop from '../../../components/Upload';
 import FileList from '../../../components/FileList';
 import Question from '../../../components/Question';
 import api from '../../../services/api';
@@ -104,11 +104,6 @@ export default function Step02({ handleDeleteFileDownload }) {
     uploaded.forEach(e => processUpload(e, type));
   }
 
-  // useEffect(() => {
-  //   updateFile();
-  // }, [updateFile, uploadedFiles]);
-
-  console.log('slides', uploadedFiles);
   return (
     <Container>
       <ul>

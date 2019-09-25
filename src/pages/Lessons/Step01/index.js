@@ -31,9 +31,7 @@ export default function Step01({
   handleChange,
 }) {
   const classes = useStyles();
-
   useEffect(() => {
-    console.log(modules);
     if (modules) {
       fixedModules(modules);
     }
