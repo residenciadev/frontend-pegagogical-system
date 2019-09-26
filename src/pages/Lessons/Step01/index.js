@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-
+import PropTypes from 'prop-types';
 import Select from 'react-select';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
@@ -15,15 +15,10 @@ const useStyles = makeStyles(theme => ({
 export default function Step01({
   modules,
   values,
-  setValues,
   lessonsOptions,
-  setLessonsOptions,
   lessonSelected,
-  setLessonSelected,
   modulesOptions,
-  setModulesOptions,
   modulesSelected,
-  setModulesSelected,
   fixedModules,
   handleSelectModule,
   isDisabled,
@@ -101,8 +96,8 @@ export default function Step01({
                 rows="1"
                 multiline
                 fullWidth
-                value={values.themeLesson}
-                onChange={handleChange('themeLesson')}
+                value={values.theme}
+                onChange={handleChange('theme')}
               />
             </div>
           </li>
@@ -123,8 +118,8 @@ export default function Step01({
                 rows="4"
                 placeholder="O que o aluno irá aprender com a aula?"
                 className={classes.textField}
-                value={values.competencia}
-                onChange={handleChange('competencia')}
+                value={values.skills}
+                onChange={handleChange('skills')}
               />
             </div>
           </li>
@@ -133,3 +128,29 @@ export default function Step01({
     </>
   );
 }
+
+Step01.propTypes = {
+  modules: PropTypes.array.isRequired,
+  values: PropTypes.shape({
+    label: PropTypes.string,
+    skills: PropTypes.string,
+    theme: PropTypes.string,
+  }).isRequired,
+  modulesSelected: PropTypes.shape({
+    label: PropTypes.string,
+    block: PropTypes.string,
+  }),
+  handleSelectModule: PropTypes.func.isRequired,
+  fixedModules: PropTypes.func.isRequired,
+  handleSelectLesson: PropTypes.func.isRequired,
+  handleChange: PropTypes.func.isRequired,
+  isDisabled: PropTypes.bool.isRequired,
+  lessonsOptions: PropTypes.array.isRequired,
+  modulesOptions: PropTypes.array.isRequired,
+  lessonSelected: PropTypes.shape({}),
+};
+
+Step01.defaultProps = {
+  modulesSelected: null,
+  lessonSelected: null,
+};

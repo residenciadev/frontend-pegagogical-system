@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,6 +9,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { uniqueId } from 'lodash';
 import filesize from 'filesize';
+import { toast } from 'react-toastify';
 import Step01 from './Step01';
 import Step02 from './Step02';
 import { getUserRequest } from '../../store/modules/user/actions';
@@ -63,8 +65,8 @@ export default function Lessons() {
   const [activeStep, setActiveStep] = useState(0);
   const profile = useSelector(state => state.user.profile);
   const [values, setValues] = useState({
-    themeLesson: '',
-    competencia: '',
+    theme: '',
+    skills: '',
   });
   const [lessonsOptions, setLessonsOptions] = useState([
     { value: 'aula-01', label: 'Aula 01', disabled: false },
@@ -89,11 +91,14 @@ export default function Lessons() {
 
   const [uploadedFiles, setUploadedFiles] = useState({
     slide: [],
-    material: [],
+    materialComplementary: [],
     images: [],
     backgroundImages: [],
     videos: [],
   });
+
+  const [questions, setQuestions] = useState();
+  const [answers, setAnswers] = useState();
 
   const [isDisabled, setIsDisabled] = useState(true);
 
@@ -158,6 +163,71 @@ export default function Lessons() {
 
   async function handleDeleteFileDownload(id, type) {
     await api.delete(`dropbox/${id}`);
+
+    setUploadedFiles(prevState => {
+      const removeValue = prevState[type].filter(value => id !== value.id);
+      return {
+        ...prevState,
+        [type]: removeValue,
+      };
+    });
+  }
+  async function handleSubmit(event) {
+    event.preventDefault();
+    try {
+      const module_id = modulesSelected.id;
+      const status = 'waiting_for_the_pedagogical';
+      const title = lessonSelected.value;
+      const { theme, skills } = values;
+      const {
+        slide,
+        materialComplementary,
+        images,
+        backgroundImages,
+        videos,
+      } = uploadedFiles;
+      const data = slide.concat(
+        materialComplementary,
+        images,
+        backgroundImages,
+        videos
+      );
+      const dropbox_id = data
+        .filter(element => element.id !== undefined)
+        .map(element => element.id);
+
+      const content = {
+        theme,
+        skills,
+        slide: true,
+        material: true,
+        material_complementary: true,
+        images: true,
+        images_background: true,
+        video: true,
+        dropbox_id,
+      };
+      console.log(module_id, status, title, content);
+      const responseLesson = await api.post('lessons', {
+        module_id,
+        status,
+        title,
+      });
+      console.log(responseLesson.data.id);
+      const responseContent = await api.post(
+        `lessons/${responseLesson.data.id}/content`,
+        {
+          content,
+        }
+      );
+
+      toast.success(
+        'Aula criada com sucesso, aguarde a aprovação do pedagógico'
+      );
+      console.log(responseContent);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   function handleNext() {
@@ -238,7 +308,24 @@ export default function Lessons() {
     uploaded.forEach(e => processUpload(e, type));
   }
 
-  console.log(uploadedFiles);
+  function handleChangeQuestions(data, type) {
+    if (type === 'questions') {
+      setQuestions(prevState => {
+        return {
+          ...prevState,
+          data,
+        };
+      });
+    }
+    if (type === 'answers') {
+      setAnswers(prevState => {
+        return {
+          ...prevState,
+          data,
+        };
+      });
+    }
+  }
 
   function getStepContent(stepIndex) {
     switch (stepIndex) {
@@ -247,15 +334,10 @@ export default function Lessons() {
           <Step01
             modules={profile.modules}
             values={values}
-            setValues={setValues}
             lessonsOptions={lessonsOptions}
-            setLessonsOptions={setLessonsOptions}
             lessonSelected={lessonSelected}
-            setLessonSelected={setLessonSelected}
             modulesOptions={modulesOptions}
-            setModulesOptions={setModulesOptions}
             modulesSelected={modulesSelected}
-            setModulesSelected={setModulesSelected}
             handleSelectLesson={handleSelectLesson}
             handleSelectModule={handleSelectModule}
             fixedModules={fixedModules}
@@ -270,6 +352,9 @@ export default function Lessons() {
             handleDeleteFileDownload={handleDeleteFileDownload}
             handleUpload={handleUpload}
             uploadedFiles={uploadedFiles}
+            handleChangeQuestions={handleChangeQuestions}
+            questions={questions}
+            answers={answers}
           />
         );
       case 2:
@@ -295,23 +380,39 @@ export default function Lessons() {
             <Typography className={classes.instructions}>
               Todas as etapas foram concluídas
             </Typography>
-            <Button onClick={handleReset}>Reset</Button>
+            <Button onClick={handleReset}>Resetar</Button>
           </div>
         ) : (
           <div>
-            <>{getStepContent(activeStep)}</>
-            <div>
-              <Button
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                className={classes.backButton}
-              >
-                Voltar
-              </Button>
-              <Button variant="contained" color="primary" onClick={handleNext}>
-                {activeStep === steps.length - 1 ? 'Finalizar' : 'Próximo'}
-              </Button>
-            </div>
+            <form onSubmit={e => handleSubmit(e)}>
+              <>{getStepContent(activeStep)}</>
+              <div>
+                <Button
+                  disabled={activeStep === 0}
+                  onClick={handleBack}
+                  className={classes.backButton}
+                  type="button"
+                >
+                  Voltar
+                </Button>
+
+                {activeStep === steps.length - 1 && (
+                  <Button type="submit" variant="contained" color="primary">
+                    Finalizar
+                  </Button>
+                )}
+                {activeStep !== steps.length - 1 && (
+                  <Button
+                    variant="contained"
+                    type="button"
+                    color="primary"
+                    onClick={handleNext}
+                  >
+                    Próximo
+                  </Button>
+                )}
+              </div>
+            </form>
           </div>
         )}
       </div>

@@ -21,6 +21,7 @@ export default function Step02({
   handleDeleteFileDownload,
   handleUpload,
   uploadedFiles,
+  handleChangeQuestions,
 }) {
   const classes = useStyles();
   const [state, setState] = useState({
@@ -47,7 +48,7 @@ export default function Step02({
               <ImgDropAndCrop
                 onUpload={e => handleUpload(e, 'slide')}
                 message="Clique ou arraste aqui para enviar"
-                backgroundColor="upload"
+                backgroundColor="download"
                 accept="application/*"
               />
             )}
@@ -62,7 +63,38 @@ export default function Step02({
         </li>
         <li className="item">
           <div className="left-column box">
-            <h2>4. Imagens*</h2>
+            <h2>4. Material Didático Complementar*</h2>
+            <p>
+              Parte escrita do conteúdo em no mínimo 3 laudas. Pode-se entender
+              como um resumo/guia de aula que auxiliará o aluno no seu processo
+              de aprendizagem. Isto não impede que você realize indicações de
+              artigos, livros ou apostilas, caso deseje
+            </p>
+          </div>
+          <div className="center-column box">
+            {!!uploadedFiles.materialComplementary.length < 5 &&
+              state.dropbox && (
+                <ImgDropAndCrop
+                  onUpload={e => handleUpload(e, 'materialComplementary')}
+                  message="Clique ou arraste aqui para enviar"
+                  backgroundColor="download"
+                  accept="application/*"
+                />
+              )}
+
+            {!!uploadedFiles.materialComplementary.length && (
+              <FileList
+                files={uploadedFiles.materialComplementary}
+                onDelete={e =>
+                  handleDeleteFileDownload(e, 'materialComplementary')
+                }
+              />
+            )}
+          </div>
+        </li>
+        <li className="item">
+          <div className="left-column box">
+            <h2>5. Imagens*</h2>
             <p>Adicione as imagens que serão utilizadas em sua aula</p>
             <p>Imagens(mínimo de 10) e GIFs</p>
           </div>
@@ -86,7 +118,7 @@ export default function Step02({
         </li>
         <li className="item">
           <div className="left-column box">
-            <h2>5. Planos de Fundo*</h2>
+            <h2>6. Planos de Fundo*</h2>
             <p>Adicione as imagens que serão utilizadas no fundo da</p>
             <p>2 Imagens</p>
           </div>
@@ -96,7 +128,7 @@ export default function Step02({
                 onUpload={e => handleUpload(e, 'backgroundImages')}
                 message="Clique ou arraste aqui para enviar"
                 backgroundColor="download"
-                accept="application/*, image/*, pdf/*"
+                accept="image/jpeg, image/png"
               />
             )}
 
@@ -110,7 +142,7 @@ export default function Step02({
         </li>
         <li className="item">
           <div className="left-column box">
-            <h2>6. Vídeos*</h2>
+            <h2>7. Vídeos*</h2>
             <p>
               Adicione os vídeos que serão utilizados em sua aula Cole os links
             </p>
@@ -137,7 +169,7 @@ export default function Step02({
                 onUpload={e => handleUpload(e, 'videos')}
                 message="Clique ou arraste aqui para enviar"
                 backgroundColor="download"
-                accept="application/*, image/*, pdf/*"
+                accept="video/*"
               />
             )}
 
@@ -152,10 +184,12 @@ export default function Step02({
         <li className="question-item">
           <div className="left-column box">
             <h2 className="title-question">Questões</h2>
-            <Question />
+            <Question
+              handleChange={e => handleChangeQuestions(e, 'questions')}
+            />
 
             <h2 className="title-question">Gabarito</h2>
-            <Question />
+            <Question handleChange={e => handleChangeQuestions(e, 'answers')} />
           </div>
         </li>
       </ul>
@@ -172,6 +206,7 @@ Step02.propTypes = {
     material: PropTypes.array,
     images: PropTypes.array,
     videos: PropTypes.array,
+    materialComplementary: PropTypes.array,
     backgroundImages: PropTypes.array,
   }).isRequired,
 };

@@ -1,16 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import ReactQuill from 'react-quill';
 
-class Questions extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      text: '',
-      editorHtml: '',
-    };
-  }
+// import { Container } from './styles';
 
-  modules = {
+export default function Question({ handleChange }) {
+  const modules = {
     toolbar: [
       [{ header: [1, 2, false] }],
       ['bold', 'italic', 'underline', 'strike', 'blockquote'],
@@ -25,7 +20,7 @@ class Questions extends Component {
     ],
   };
 
-  formats = [
+  const formats = [
     'header',
     'bold',
     'italic',
@@ -39,21 +34,22 @@ class Questions extends Component {
     'image',
   ];
 
-  handleChange(html) {
-    this.setState({ editorHtml: html });
-  }
-  render() {
-    return (
-      <div className="text-editor">
-        <ReactQuill
-          theme="snow"
-          onChange={e => this.handleChange(e)}
-          modules={this.modules}
-          formats={this.formats}
-        ></ReactQuill>
-      </div>
-    );
-  }
+  return (
+    <div className="text-editor">
+      <ReactQuill
+        theme="snow"
+        onChange={(e, type) => handleChange(e, type)}
+        modules={modules}
+        formats={formats}
+      />
+    </div>
+  );
 }
 
-export default Questions;
+Question.propTypes = {
+  handleChange: PropTypes.func,
+};
+
+Question.defaultProps = {
+  handleChange: () => {},
+};

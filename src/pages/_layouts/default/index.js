@@ -5,7 +5,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Content } from './styles';
 import Header from '../../../components/Header';
 
-
 const useStyles = makeStyles(theme => ({
   wrapper: {
     height: '100vh',
