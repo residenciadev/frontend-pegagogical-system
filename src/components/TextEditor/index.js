@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactQuill from 'react-quill';
 
-// import { Container } from './styles';
-
 export default function Question({ handleChange }) {
   const modules = {
     toolbar: [
@@ -15,7 +13,7 @@ export default function Question({ handleChange }) {
         { indent: '-1' },
         { indent: '+1' },
       ],
-      ['link', 'image'],
+      ['link'],
       ['clean'],
     ],
   };
@@ -31,7 +29,6 @@ export default function Question({ handleChange }) {
     'bullet',
     'indent',
     'link',
-    'image',
   ];
 
   return (

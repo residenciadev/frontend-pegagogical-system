@@ -470,83 +470,86 @@ export default function EnhancedTable({ data: rows, loadData }) {
               handleDelete={e => handleDelete(e)}
             />
             <TableBody>
-              {stableSort(rows, getSorting(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.id);
-                  const labelId = `enhanced-table-checkbox-${index}`;
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.id}
-                      selected={isItemSelected}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          onClick={event =>
-                            handleClick(event, row.id, row.title)
-                          }
-                          checked={isItemSelected}
-                          inputProps={{ 'aria-labelledby': labelId }}
-                        />
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="none"
+              {rows &&
+                stableSort(rows, getSorting(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    const isItemSelected = isSelected(row.id);
+                    const labelId = `enhanced-table-checkbox-${index}`;
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.id}
+                        selected={isItemSelected}
                       >
-                        {row.id}
-                      </TableCell>
-                      <TableCell align="left">
-                        {formatDate(row.created_at)}
-                      </TableCell>
-                      <TableCell align="left">
-                        <Chip
-                          classes={{ label: classes.label }}
-                          variant="outlined"
-                          avatar={
-                            row.user.dropbox_id ? (
-                              <Avatar src={correctUrl(row.user.dropbox.url)} />
-                            ) : (
-                              <Avatar>
-                                <FaceIcon />
-                              </Avatar>
-                            )
-                          }
-                          label={row.user.name}
-                          className={classes.textChip}
-                        />
-                      </TableCell>
-                      <TableCell align="left">{row.title}</TableCell>
-                      <TableCell align="left">
-                        {row.module.blocks.courses.name}
-                      </TableCell>
-                      <TableCell align="left">
-                        {row.module.blocks.name}
-                      </TableCell>
-                      <TableCell align="left">{row.module.name}</TableCell>
-                      <TableCell align="left">
-                        <Chip
-                          className={classes[colorStatus(row.status)]}
-                          label={correctStatus(row.status)}
-                        />
-                      </TableCell>
-
-                      <TableCell align="left">
-                        <Button
-                          className={classes.primary}
-                          onClick={() => handleOpenClose(row.id, row.title)}
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            onClick={event =>
+                              handleClick(event, row.id, row.title)
+                            }
+                            checked={isItemSelected}
+                            inputProps={{ 'aria-labelledby': labelId }}
+                          />
+                        </TableCell>
+                        <TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          padding="none"
                         >
-                          Editar
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                          {row.id}
+                        </TableCell>
+                        <TableCell align="left">
+                          {formatDate(row.created_at)}
+                        </TableCell>
+                        <TableCell align="left">
+                          <Chip
+                            classes={{ label: classes.label }}
+                            variant="outlined"
+                            avatar={
+                              row.user.dropbox_id ? (
+                                <Avatar
+                                  src={correctUrl(row.user.dropbox.url)}
+                                />
+                              ) : (
+                                <Avatar>
+                                  <FaceIcon />
+                                </Avatar>
+                              )
+                            }
+                            label={row.user.name}
+                            className={classes.textChip}
+                          />
+                        </TableCell>
+                        <TableCell align="left">{row.title}</TableCell>
+                        <TableCell align="left">
+                          {row.module.blocks.courses.name}
+                        </TableCell>
+                        <TableCell align="left">
+                          {row.module.blocks.name}
+                        </TableCell>
+                        <TableCell align="left">{row.module.name}</TableCell>
+                        <TableCell align="left">
+                          <Chip
+                            className={classes[colorStatus(row.status)]}
+                            label={correctStatus(row.status)}
+                          />
+                        </TableCell>
+
+                        <TableCell align="left">
+                          <Button
+                            className={classes.primary}
+                            onClick={() => handleOpenClose(row.id, row.title)}
+                          >
+                            Editar
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
               {emptyRows > 0 && (
                 <TableRow style={{ height: 49 * emptyRows }}>
                   <TableCell colSpan={6} />

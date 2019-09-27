@@ -49,6 +49,17 @@ const useStyles = makeStyles(theme => ({
     height: '56px',
     width: '100%',
   },
+  alert: {
+    marginRight: theme.spacing(2),
+    marginLeft: theme.spacing(2),
+    color: theme.palette.secondary.main,
+  },
+
+  content: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    maxWidth: '1208px',
+  },
 }));
 
 function getSteps() {
@@ -64,6 +75,7 @@ export default function Lessons() {
   const dispatch = useDispatch();
   const [activeStep, setActiveStep] = useState(0);
   const profile = useSelector(state => state.user.profile);
+  const loading = useSelector(state => state.user.loading);
   const [values, setValues] = useState({
     theme: '',
     skills: '',
@@ -82,6 +94,7 @@ export default function Lessons() {
   const [modulesOptions, setModulesOptions] = useState([]);
   const [modulesSelected, setModulesSelected] = useState();
   const [lessonSelected, setLessonSelected] = useState();
+  const [message, setMessage] = useState('');
 
   const steps = getSteps();
   const [state, setState] = useState({
@@ -116,33 +129,32 @@ export default function Lessons() {
       }));
       setModulesOptions(obj);
     },
-    [setModulesOptions]
+
+    []
   );
 
-  const fixedLessons = useCallback(
-    lessons => {
-      for (let i = 0; i < lessonsOptions.length; i++) {
-        if (lessons.length <= 0) {
-          lessonsOptions[i].disabled = false;
-        }
-        for (let j = 0; j < lessons.length; j++) {
-          if (lessonsOptions[i].label === lessons[0].title) {
-            lessonsOptions[i].disabled = true;
-          } else {
-            lessonsOptions[i].disabled = false;
+  const fixedLessons = useCallback(lessons => {
+    setLessonsOptions(prevState => {
+      // eslint-disable-next-line no-return-assign
+      lessons.forEach(element => {
+        prevState.map(option => {
+          if (option.value === element.title) {
+            option.disabled = true;
           }
-        }
-      }
-      setIsDisabled(false);
-    },
-    [lessonsOptions]
-  );
+        });
+      });
+
+      return [...prevState];
+    });
+    setIsDisabled(false);
+  }, []);
 
   const loadLessonsDone = useCallback(
     async modulesSelected => {
       const response = await api.get(
         `modules/${modulesSelected.id}/lesson-done`
       );
+
       fixedLessons(response.data);
     },
     [fixedLessons]
@@ -192,46 +204,78 @@ export default function Lessons() {
         backgroundImages,
         videos
       );
-      const dropbox_id = data
+
+      const dropbox = data
         .filter(element => element.id !== undefined)
         .map(element => element.id);
 
-      const content = {
-        theme,
-        skills,
-        slide: true,
-        material: true,
-        material_complementary: true,
-        images: true,
-        images_background: true,
-        video: true,
-        dropbox_id,
-      };
-      console.log(module_id, status, title, content);
-      const responseLesson = await api.post('lessons', {
-        module_id,
-        status,
-        title,
-      });
-      console.log(responseLesson.data.id);
-      const responseContent = await api.post(
-        `lessons/${responseLesson.data.id}/content`,
-        {
-          content,
-        }
-      );
+      if (activeStep === 1) {
+        if (
+          slide.length >= 1 &&
+          materialComplementary.length >= 1 &&
+          dropbox.length >= 10 &&
+          backgroundImages.length >= 1 &&
+          videos.length >= 1 &&
+          !!questions &&
+          !!answers
+        ) {
+          const responseLesson = await api.post('lessons', {
+            module_id,
+            status,
+            title,
+          });
 
-      toast.success(
-        'Aula criada com sucesso, aguarde a aprovação do pedagógico'
-      );
-      console.log(responseContent);
+          await api.post(`lessons/${responseLesson.data.id}/content`, {
+            theme,
+            skills,
+            slide: true,
+            material: true,
+            material_complementary: true,
+            images: true,
+            images_background: true,
+            video: true,
+            dropbox,
+            questions,
+            questions_feedback: answers,
+          });
+
+          toast.success(
+            'Aula criada com sucesso, aguarde a aprovação do pedagógico'
+          );
+        } else {
+          setMessage(
+            'Você precisa preencher todos os campos !! Lembrando Imagens são no mínimo 10'
+          );
+
+          setTimeout(() => {
+            setMessage('');
+          }, 5000);
+          throw new Error('oops');
+        }
+      }
     } catch (error) {
-      console.log(error);
+      toast.error('Não foi possível criar a aula, verifique todos os campos');
     }
   }
 
   function handleNext() {
-    setActiveStep(prevActiveStep => prevActiveStep + 1);
+    if (activeStep === 0) {
+      if (
+        !values.title &&
+        !values.skills &&
+        !modulesSelected &&
+        !lessonSelected
+      ) {
+        setMessage('Você precisa preencher todos os campos !!');
+
+        setTimeout(() => {
+          setMessage('');
+        }, 5000);
+      } else {
+        console.log('entrou');
+        setActiveStep(prevActiveStep => prevActiveStep + 1);
+      }
+    }
   }
 
   function handleBack() {
@@ -332,6 +376,7 @@ export default function Lessons() {
       case 0:
         return (
           <Step01
+            loading={loading}
             modules={profile.modules}
             values={values}
             lessonsOptions={lessonsOptions}
@@ -353,12 +398,9 @@ export default function Lessons() {
             handleUpload={handleUpload}
             uploadedFiles={uploadedFiles}
             handleChangeQuestions={handleChangeQuestions}
-            questions={questions}
-            answers={answers}
           />
         );
-      case 2:
-        return 'Finalize e aguarde a aprovação do pedagógico';
+
       default:
         return 'Uknown stepIndex';
     }
@@ -386,7 +428,7 @@ export default function Lessons() {
           <div>
             <form onSubmit={e => handleSubmit(e)}>
               <>{getStepContent(activeStep)}</>
-              <div>
+              <div className={classes.content}>
                 <Button
                   disabled={activeStep === 0}
                   onClick={handleBack}
@@ -396,12 +438,12 @@ export default function Lessons() {
                   Voltar
                 </Button>
 
-                {activeStep === steps.length - 1 && (
+                {activeStep === steps.length - 2 && (
                   <Button type="submit" variant="contained" color="primary">
                     Finalizar
                   </Button>
                 )}
-                {activeStep !== steps.length - 1 && (
+                {activeStep !== steps.length - 2 && (
                   <Button
                     variant="contained"
                     type="button"
@@ -411,6 +453,7 @@ export default function Lessons() {
                     Próximo
                   </Button>
                 )}
+                <span className={classes.alert}>{message}</span>
               </div>
             </form>
           </div>

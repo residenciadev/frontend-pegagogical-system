@@ -13,5 +13,5 @@ export const Content = styled.div`
   max-width: 1520px;
 
   margin: 24px auto;
-  padding: 0 24px;
+  /* padding: 0 24px; */
 `;

@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Container } from '../styles';
 import ImgDropAndCrop from '../../../components/Upload';
 import FileList from '../../../components/FileList';
-import Question from '../../../components/Question';
+import TextEditor from '../../../components/TextEditor';
 import api from '../../../services/api';
 
 const useStyles = makeStyles(theme => ({
@@ -184,12 +184,14 @@ export default function Step02({
         <li className="question-item">
           <div className="left-column box">
             <h2 className="title-question">Questões</h2>
-            <Question
+            <TextEditor
               handleChange={e => handleChangeQuestions(e, 'questions')}
             />
 
             <h2 className="title-question">Gabarito</h2>
-            <Question handleChange={e => handleChangeQuestions(e, 'answers')} />
+            <TextEditor
+              handleChange={e => handleChangeQuestions(e, 'answers')}
+            />
           </div>
         </li>
       </ul>
@@ -200,6 +202,7 @@ export default function Step02({
 Step02.propTypes = {
   handleDeleteFileDownload: PropTypes.func.isRequired,
   handleUpload: PropTypes.func.isRequired,
+  handleChangeQuestions: PropTypes.func.isRequired,
   uploadedFiles: PropTypes.shape({
     length: PropTypes.string,
     slide: PropTypes.array,

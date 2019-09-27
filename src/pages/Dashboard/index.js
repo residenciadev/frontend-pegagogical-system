@@ -17,6 +17,7 @@ export default function Dashboard() {
   useEffect(() => {
     loadData();
   }, []);
+  console.log(data);
 
   return (
     <>

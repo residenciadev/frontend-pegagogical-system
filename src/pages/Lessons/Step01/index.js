@@ -13,6 +13,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Step01({
+  loading,
   modules,
   values,
   lessonsOptions,
@@ -27,10 +28,10 @@ export default function Step01({
 }) {
   const classes = useStyles();
   useEffect(() => {
-    if (modules) {
+    if (!loading && modules) {
       fixedModules(modules);
     }
-  }, [fixedModules, modules]);
+  }, [fixedModules, loading, modules]);
 
   return (
     <>
@@ -48,6 +49,7 @@ export default function Step01({
                 options={modulesOptions}
                 value={modulesSelected}
                 onChange={handleSelectModule}
+                required
               />
               {modulesSelected && (
                 <span>
@@ -73,6 +75,7 @@ export default function Step01({
                   value={lessonSelected}
                   onChange={handleSelectLesson}
                   isOptionDisabled={option => option.disabled === true}
+                  required
                 />
               }
             </div>
@@ -98,6 +101,8 @@ export default function Step01({
                 fullWidth
                 value={values.theme}
                 onChange={handleChange('theme')}
+                style={{ zIndex: 0 }}
+                required
               />
             </div>
           </li>
@@ -120,6 +125,8 @@ export default function Step01({
                 className={classes.textField}
                 value={values.skills}
                 onChange={handleChange('skills')}
+                style={{ zIndex: 0 }}
+                required
               />
             </div>
           </li>
@@ -131,6 +138,7 @@ export default function Step01({
 
 Step01.propTypes = {
   modules: PropTypes.array.isRequired,
+  loading: PropTypes.bool.isRequired,
   values: PropTypes.shape({
     label: PropTypes.string,
     skills: PropTypes.string,
