@@ -20,6 +20,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
+import { NavLink } from 'react-router-dom';
 
 import Modal from '@material-ui/core/Modal';
 import Avatar from '@material-ui/core/Avatar';
@@ -540,12 +541,9 @@ export default function EnhancedTable({ data: rows, loadData }) {
                         </TableCell>
 
                         <TableCell align="left">
-                          <Button
-                            className={classes.primary}
-                            onClick={() => handleOpenClose(row.id, row.title)}
-                          >
+                          <NavLink to={`/edit-lessons/${row.id}`}>
                             Editar
-                          </Button>
+                          </NavLink>
                         </TableCell>
                       </TableRow>
                     );

@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { uniqueId } from 'lodash';
-import filesize from 'filesize';
+
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container } from '../styles';
-import ImgDropAndCrop from '../../../components/Upload';
+import Upload from '../../../components/Upload';
 import FileList from '../../../components/FileList';
 import TextEditor from '../../../components/TextEditor';
-import api from '../../../services/api';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -22,6 +20,8 @@ export default function Step02({
   handleUpload,
   uploadedFiles,
   handleChangeQuestions,
+  questions,
+  answers,
 }) {
   const classes = useStyles();
   const [state, setState] = useState({
@@ -45,7 +45,7 @@ export default function Step02({
           </div>
           <div className="center-column box">
             {!!uploadedFiles.slide.length < 5 && state.dropbox && (
-              <ImgDropAndCrop
+              <Upload
                 onUpload={e => handleUpload(e, 'slide')}
                 message="Clique ou arraste aqui para enviar"
                 backgroundColor="download"
@@ -74,7 +74,7 @@ export default function Step02({
           <div className="center-column box">
             {!!uploadedFiles.materialComplementary.length < 5 &&
               state.dropbox && (
-                <ImgDropAndCrop
+                <Upload
                   onUpload={e => handleUpload(e, 'materialComplementary')}
                   message="Clique ou arraste aqui para enviar"
                   backgroundColor="download"
@@ -100,11 +100,11 @@ export default function Step02({
           </div>
           <div className="center-column box">
             {!!uploadedFiles.images.length < 10 && state.dropbox && (
-              <ImgDropAndCrop
+              <Upload
                 onUpload={e => handleUpload(e, 'images')}
                 message="Clique ou arraste aqui para enviar"
                 backgroundColor="download"
-                accept="application/*, image/*, pdf/*"
+                accept="application/*, image/*"
               />
             )}
 
@@ -123,8 +123,8 @@ export default function Step02({
             <p>2 Imagens</p>
           </div>
           <div className="center-column box">
-            {!!uploadedFiles.backgroundImages.length < 1 && state.dropbox && (
-              <ImgDropAndCrop
+            {!!uploadedFiles.backgroundImages.length < 10 && state.dropbox && (
+              <Upload
                 onUpload={e => handleUpload(e, 'backgroundImages')}
                 message="Clique ou arraste aqui para enviar"
                 backgroundColor="download"
@@ -165,7 +165,7 @@ export default function Step02({
               <p>OU</p>
             </div>
             {!!uploadedFiles.videos.length < 1 && state.dropbox && (
-              <ImgDropAndCrop
+              <Upload
                 onUpload={e => handleUpload(e, 'videos')}
                 message="Clique ou arraste aqui para enviar"
                 backgroundColor="download"
@@ -185,11 +185,13 @@ export default function Step02({
           <div className="left-column box">
             <h2 className="title-question">Questões</h2>
             <TextEditor
+              value={questions}
               handleChange={e => handleChangeQuestions(e, 'questions')}
             />
 
             <h2 className="title-question">Gabarito</h2>
             <TextEditor
+              value={answers}
               handleChange={e => handleChangeQuestions(e, 'answers')}
             />
           </div>

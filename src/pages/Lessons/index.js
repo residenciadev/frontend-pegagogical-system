@@ -352,12 +352,12 @@ export default function Lessons() {
     uploaded.forEach(e => processUpload(e, type));
   }
 
-  function handleChangeQuestions(data, type) {
+  function handleChangeQuestions(content, type) {
     if (type === 'questions') {
       setQuestions(prevState => {
         return {
           ...prevState,
-          data,
+          content,
         };
       });
     }
@@ -365,7 +365,7 @@ export default function Lessons() {
       setAnswers(prevState => {
         return {
           ...prevState,
-          data,
+          content,
         };
       });
     }
@@ -398,6 +398,8 @@ export default function Lessons() {
             handleUpload={handleUpload}
             uploadedFiles={uploadedFiles}
             handleChangeQuestions={handleChangeQuestions}
+            questions={questions}
+            answers={answers}
           />
         );
 
