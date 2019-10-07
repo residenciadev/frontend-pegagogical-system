@@ -23,7 +23,7 @@ export const DropContainer = styled.div.attrs({
   transition: height 0.2s ease;
   margin: auto;
   display: flex;
-  height: 100px;
+  height: 115px;
   width: 100%;
   background-color: ${props =>
     backgroundColor[props.backgroundColor || 'default']};

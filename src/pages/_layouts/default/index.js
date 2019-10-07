@@ -8,6 +8,7 @@ import Header from '../../../components/Header';
 const useStyles = makeStyles(theme => ({
   wrapper: {
     height: '100vh',
+    overflow: 'auto',
     background: [
       theme.palette.type === 'dark' ? theme.palette.background.dark : '#FFF',
     ],

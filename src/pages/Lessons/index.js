@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import { uniqueId } from 'lodash';
 import filesize from 'filesize';
 import { toast } from 'react-toastify';
+import useReactRouter from 'use-react-router';
 import Step01 from './Step01';
 import Step02 from './Step02';
 import { getUserRequest } from '../../store/modules/user/actions';
@@ -73,6 +74,7 @@ function getSteps() {
 export default function Lessons() {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const { history } = useReactRouter();
   const [activeStep, setActiveStep] = useState(0);
   const profile = useSelector(state => state.user.profile);
   const loading = useSelector(state => state.user.loading);
@@ -242,6 +244,8 @@ export default function Lessons() {
           toast.success(
             'Aula criada com sucesso, aguarde a aprovação do pedagógico'
           );
+
+          history.push('/');
         } else {
           setMessage(
             'Você precisa preencher todos os campos !! Lembrando Imagens são no mínimo 10'

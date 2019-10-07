@@ -7,8 +7,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
 
 import * as Yup from 'yup';
-import { resetPasswordRequest } from '../../store/modules/auth/actions';
 import useReactRouter from 'use-react-router';
+import { resetPasswordRequest } from '../../store/modules/auth/actions';
 
 const schema = Yup.object().shape({
   password: Yup.string().required('A senha é obrigatória'),

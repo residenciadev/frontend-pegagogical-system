@@ -1,9 +1,15 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import ReactQuill from 'react-quill';
-import { Delta } from 'quill';
+import { makeStyles } from '@material-ui/core/styles';
 
-export default function Question({ handleChange, value, setValue }) {
+const useStyles = makeStyles(theme => ({
+  color: {
+    color: [theme.palette.type === 'dark' ? '#FFF' : '#000'],
+  },
+}));
+
+export default function Question({ handleChange, value }) {
+  const classes = useStyles();
   const modules = {
     toolbar: [
       [{ header: [1, 2, false] }],
@@ -32,15 +38,11 @@ export default function Question({ handleChange, value, setValue }) {
     'link',
   ];
 
-  // function onChange(content, delta, source, editor) {
-  //   const text = editor.getText(content);
-  //   // this.setState({ content: text });
-  //   setValue(text);
-  // }
   return (
     <div className="text-editor">
       <ReactQuill
         theme="snow"
+        className={classes.color}
         defaultValue={value}
         onChange={(e, type) => handleChange(e, type)}
         modules={modules}
@@ -49,11 +51,3 @@ export default function Question({ handleChange, value, setValue }) {
     </div>
   );
 }
-
-// Question.propTypes = {
-//   handleChange: PropTypes.func,
-// };
-
-// Question.defaultProps = {
-//   handleChange: () => {},
-// };

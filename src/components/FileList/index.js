@@ -3,13 +3,21 @@ import PropTypes from 'prop-types';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import { MdCheckCircle, MdError, MdLink } from 'react-icons/md';
 import { Container, FileInfo, Preview } from './styles';
+import DefaultImg from '../../assets/default.jpeg';
+
+function changeUrlPreview(url) {
+  if (url.search(/(png|jpeg|jpg)/) === -1) {
+    return DefaultImg;
+  }
+  return url;
+}
 
 const FileList = ({ files, onDelete }) => (
   <Container>
     {files.map(uploadedFile => (
       <li key={uploadedFile.id}>
         <FileInfo>
-          <Preview src={uploadedFile.preview} />
+          <Preview src={changeUrlPreview(uploadedFile.preview)} />
           <div>
             <strong>{uploadedFile.name}</strong>
             <span>

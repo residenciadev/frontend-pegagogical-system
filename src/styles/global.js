@@ -40,6 +40,7 @@ body,input,button {
 }
 .ql-container.ql-snow{
   height:200px;
+  
 }
 
 `;
