@@ -4,11 +4,25 @@ import { CircularProgressbar } from 'react-circular-progressbar';
 import { MdCheckCircle, MdError, MdLink } from 'react-icons/md';
 import { Container, FileInfo, Preview } from './styles';
 import DefaultImg from '../../assets/default.jpeg';
+import PdfImg from '../../assets/file.png';
+import VideoImg from '../../assets/video.png';
 
 function changeUrlPreview(url) {
-  if (url.search(/(png|jpeg|jpg)/) === -1) {
-    return DefaultImg;
+  if (url.search(/(blob)/) === -1) {
+    if (url.search(/(pdf)/) !== -1 && url.search(/(png|jpeg|jpg)/) === -1) {
+      return PdfImg;
+    }
+    if (
+      url.search(/(webm|mp4|avi|3gp|ogg|)/) !== -1 &&
+      url.search(/(png|jpeg|jpg)/) === -1
+    ) {
+      return VideoImg;
+    }
+    if (url.search(/(png|jpeg|jpg)/) === -1) {
+      return DefaultImg;
+    }
   }
+
   return url;
 }
 

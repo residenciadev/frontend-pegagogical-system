@@ -22,16 +22,13 @@ export default function Step02({
   handleChangeQuestions,
   questions,
   answers,
+  handleChange,
+  values,
 }) {
   const classes = useStyles();
   const [state, setState] = useState({
     dropbox: true,
     linkexterno: false,
-  });
-
-  const [values, setValues] = useState({
-    themeLesson: '',
-    competencia: '',
   });
 
   return (
@@ -160,6 +157,8 @@ export default function Step02({
               rows="4"
               className={classes.textField}
               component="span"
+              value={values.links}
+              onChange={handleChange('links')}
             />
             <div className="divider">
               <p>OU</p>
@@ -213,5 +212,9 @@ Step02.propTypes = {
     videos: PropTypes.array,
     materialComplementary: PropTypes.array,
     backgroundImages: PropTypes.array,
+  }).isRequired,
+  handleChange: PropTypes.func.isRequired,
+  values: PropTypes.shape({
+    links: PropTypes.string,
   }).isRequired,
 };

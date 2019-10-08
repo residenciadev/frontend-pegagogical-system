@@ -81,6 +81,7 @@ export default function Lessons() {
   const [values, setValues] = useState({
     theme: '',
     skills: '',
+    links: '',
   });
   const [lessonsOptions, setLessonsOptions] = useState([
     { value: 'aula-01', label: 'Aula 01', disabled: false },
@@ -115,10 +116,12 @@ export default function Lessons() {
   const [questions, setQuestions] = useState();
   const [answers, setAnswers] = useState();
 
+  // const [loading, setLoading] = useState(true);
   const [isDisabled, setIsDisabled] = useState(true);
 
   useEffect(() => {
     dispatch(getUserRequest());
+    // setLoading(false);
   }, [dispatch]);
 
   const fixedModules = useCallback(
@@ -192,7 +195,7 @@ export default function Lessons() {
       const module_id = modulesSelected.id;
       const status = 'waiting_for_the_pedagogical';
       const title = lessonSelected.value;
-      const { theme, skills } = values;
+      const { theme, skills, links } = values;
       const {
         slide,
         materialComplementary,
@@ -226,7 +229,7 @@ export default function Lessons() {
             status,
             title,
           });
-
+          console.log(answers);
           await api.post(`lessons/${responseLesson.data.id}/content`, {
             theme,
             skills,
@@ -236,9 +239,10 @@ export default function Lessons() {
             images: true,
             images_background: true,
             video: true,
+            links,
             dropbox,
             questions,
-            questions_feedback: answers,
+            answers,
           });
 
           toast.success(
@@ -284,10 +288,6 @@ export default function Lessons() {
 
   function handleBack() {
     setActiveStep(prevActiveStep => prevActiveStep - 1);
-  }
-
-  function handleReset() {
-    setActiveStep(0);
   }
 
   function updateFile(id, type, data) {
@@ -404,6 +404,8 @@ export default function Lessons() {
             handleChangeQuestions={handleChangeQuestions}
             questions={questions}
             answers={answers}
+            values={values}
+            handleChange={handleChange}
           />
         );
 
@@ -411,7 +413,8 @@ export default function Lessons() {
         return 'Uknown stepIndex';
     }
   }
-
+  console.log(questions);
+  console.log('a', answers);
   return (
     <div className={classes.root}>
       <Stepper activeStep={activeStep} alternativeLabel>
@@ -421,50 +424,39 @@ export default function Lessons() {
           </Step>
         ))}
       </Stepper>
+      {loading && <h1>Carregando...</h1>}
+      {!loading && profile && (
+        <form onSubmit={e => handleSubmit(e)}>
+          <>{getStepContent(activeStep)}</>
+          <div className={classes.content}>
+            <Button
+              disabled={activeStep === 0}
+              onClick={handleBack}
+              className={classes.backButton}
+              type="button"
+            >
+              Voltar
+            </Button>
 
-      <div>
-        {activeStep === steps.length ? (
-          <div>
-            <Typography className={classes.instructions}>
-              Todas as etapas foram concluídas
-            </Typography>
-            <Button onClick={handleReset}>Resetar</Button>
+            {activeStep === steps.length - 2 && (
+              <Button type="submit" variant="contained" color="primary">
+                Finalizar
+              </Button>
+            )}
+            {activeStep !== steps.length - 2 && (
+              <Button
+                variant="contained"
+                type="button"
+                color="primary"
+                onClick={handleNext}
+              >
+                Próximo
+              </Button>
+            )}
+            <span className={classes.alert}>{message}</span>
           </div>
-        ) : (
-          <div>
-            <form onSubmit={e => handleSubmit(e)}>
-              <>{getStepContent(activeStep)}</>
-              <div className={classes.content}>
-                <Button
-                  disabled={activeStep === 0}
-                  onClick={handleBack}
-                  className={classes.backButton}
-                  type="button"
-                >
-                  Voltar
-                </Button>
-
-                {activeStep === steps.length - 2 && (
-                  <Button type="submit" variant="contained" color="primary">
-                    Finalizar
-                  </Button>
-                )}
-                {activeStep !== steps.length - 2 && (
-                  <Button
-                    variant="contained"
-                    type="button"
-                    color="primary"
-                    onClick={handleNext}
-                  >
-                    Próximo
-                  </Button>
-                )}
-                <span className={classes.alert}>{message}</span>
-              </div>
-            </form>
-          </div>
-        )}
-      </div>
+        </form>
+      )}
     </div>
   );
 }

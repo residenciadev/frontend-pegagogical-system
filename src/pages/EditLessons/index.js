@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useReactRouter from 'use-react-router';
@@ -7,6 +8,8 @@ import { uniqueId } from 'lodash';
 import filesize from 'filesize';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import Select from 'react-select';
+import { toast } from 'react-toastify';
 import Upload from '../../components/Upload';
 import FileList from '../../components/FileList';
 import correctUrl from '../../utils/correctUrl';
@@ -53,6 +56,13 @@ export default function EditLessons() {
   const [values, setValues] = useState({
     theme: '',
     skills: '',
+    material_obs: '',
+    material_complementary_obs: '',
+    images_obs: '',
+    backgroundImages_obs: '',
+    answers_obs: '',
+    questions_obs: '',
+    videos_obs: '',
   });
   const [state, setState] = useState({
     dropbox: true,
@@ -61,8 +71,7 @@ export default function EditLessons() {
 
   const [questions, setQuestions] = useState('');
   const [answers, setAnswers] = useState('');
-  const [isPedagogical, setIsPedagogical] = useState(false);
-
+  const [isNotPedagogical, setIsNotPedagogical] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState({
     slide: [],
     materialComplementary: [],
@@ -71,9 +80,31 @@ export default function EditLessons() {
     videos: [],
   });
 
+  const [statusOptions, setStatusOptions] = useState([
+    {
+      value: 'waiting_for_the_pedagogical',
+      label: 'Aguardando Pedagógico',
+      disabled: false,
+    },
+    { value: 'returned', label: 'Devolver para o prof.', disabled: false },
+    { value: 'revision', label: 'Enviar para revisão', disabled: false },
+  ]);
+
+  const [statusSelected, setStatusSelected] = useState([
+    {
+      value: 'waiting_for_the_pedagogical',
+      label: 'Aguardando Pedagógico',
+      disabled: false,
+    },
+  ]);
+
   const handleChange = name => event => {
     setValues({ ...values, [name]: event.target.value });
   };
+
+  function handleSelectStatus(e) {
+    setStatusSelected(e);
+  }
 
   function updateFile(id, type, data) {
     setUploadedFiles(prevState => {
@@ -157,26 +188,86 @@ export default function EditLessons() {
     if (type === 'questions') {
       setQuestions(prevState => {
         return {
-          ...prevState,
           content,
         };
       });
     }
+
     if (type === 'answers') {
       setAnswers(prevState => {
         return {
-          ...prevState,
           content,
         };
       });
     }
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
+    const { id: lessonsId } = match.params;
+    const { id: contentId } = dataContent;
+    const {
+      theme,
+      skills,
+      material_obs,
+      material_complementary_obs,
+      images_obs,
+      images_background_obs,
+      videos_obs,
+      questions_obs,
+      answers_obs,
+    } = values;
+    const {
+      slide,
+      materialComplementary,
+      images,
+      backgroundImages,
+      videos,
+    } = uploadedFiles;
+    const data = slide.concat(
+      materialComplementary,
+      images,
+      backgroundImages,
+      videos
+    );
+
+    const dropbox = data
+      .filter(element => element.id !== undefined)
+      .map(element => element.id);
+    try {
+      const response = await api.put(
+        `lessons/${lessonsId}/content/${contentId}?status=${statusSelected.value}`,
+        {
+          theme,
+          skills,
+          material: true,
+          material_obs,
+          material_complementary: true,
+          material_complementary_obs,
+          questions,
+          questions_obs,
+          answers,
+          answers_obs,
+          links: values.links,
+          images: true,
+          images_obs,
+          images_background: true,
+          images_background_obs,
+          video: true,
+          videos_obs,
+          dropbox,
+        }
+      );
+
+      toast.success(
+        'Aula editada com sucesso, aguarde a aprovação do pedagógico'
+      );
+    } catch (error) {
+      toast.error(`${error}`);
+    }
   }
   useEffect(() => {
-    const { id: contentId } = match.params;
+    const { id: lessonsId } = match.params;
     async function loadData(id) {
       const { type: userType } = profile;
 
@@ -186,11 +277,13 @@ export default function EditLessons() {
         theme: response.data.theme,
         skills: response.data.skills,
         material_obs: response.data.material_obs || '',
-        materialComplementary_obs:
-          response.data.materialComplementary_obs || '',
+        material_complementary_obs:
+          response.data.material_complementary_obs || '',
         images_obs: response.data.images_obs || '',
-        backgroundImages_obs: response.data.backgroundImages_obs || '',
+        images_background_obs: response.data.images_background_obs || '',
         videos_obs: response.data.videos_obs || '',
+        questions_obs: response.data.questions_obs || '',
+        answers_obs: response.data.answers_obs || '',
       });
       setUploadedFiles(() => {
         const dropboxUploaded = response.data.dropbox.map(element => ({
@@ -211,17 +304,19 @@ export default function EditLessons() {
           videos: dropboxUploaded.filter(element => element.type === 'videos'),
         };
       });
+      // console.log(response.data);
       const questionsParse = JSON.parse(response.data.questions);
-      const answersParse = JSON.parse(response.data.questions_feedback);
+      const answersParse = JSON.parse(response.data.answers);
       setQuestions(questionsParse.content);
       setAnswers(answersParse.content);
-      setIsPedagogical(!(userType === 'pedagogical'));
+      setIsNotPedagogical(!(userType === 'pedagogical'));
       setLoading(false);
     }
-    loadData(contentId);
+    loadData(lessonsId);
   }, [match, profile]);
   // console.log(dataContent);
-  console.log('up', uploadedFiles);
+  // console.log('up', dataContent);
+  // console.log('up', answers);
 
   return (
     <>
@@ -344,7 +439,7 @@ export default function EditLessons() {
                     onChange={handleChange('skills')}
                     style={{ zIndex: 0 }}
                     required
-                    disabled={isPedagogical}
+                    disabled={isNotPedagogical}
                   />
                 </div>
               </li>
@@ -400,7 +495,7 @@ export default function EditLessons() {
                     onChange={handleChange('material_obs')}
                     style={{ zIndex: 0 }}
                     required
-                    disabled={isPedagogical}
+                    disabled={isNotPedagogical}
                   />
                 </div>
               </li>
@@ -451,11 +546,11 @@ export default function EditLessons() {
                     rowsMax="4"
                     rows="4"
                     className={classes.textField}
-                    value={values.materialComplementary_obs}
-                    onChange={handleChange('materialComplementary_obs')}
+                    value={values.material_complementary_obs}
+                    onChange={handleChange('material_complementary_obs')}
                     style={{ zIndex: 0 }}
                     required
-                    disabled={isPedagogical}
+                    disabled={isNotPedagogical}
                   />
                 </div>
               </li>
@@ -511,7 +606,7 @@ export default function EditLessons() {
                     onChange={handleChange('images_obs')}
                     style={{ zIndex: 0 }}
                     required
-                    disabled={isPedagogical}
+                    disabled={isNotPedagogical}
                   />
                 </div>
               </li>
@@ -570,7 +665,7 @@ export default function EditLessons() {
                     onChange={handleChange('backgroundImages_obs')}
                     style={{ zIndex: 0 }}
                     required
-                    disabled={isPedagogical}
+                    disabled={isNotPedagogical}
                   />
                 </div>
               </li>
@@ -656,7 +751,7 @@ export default function EditLessons() {
                     onChange={handleChange('videos_obs')}
                     style={{ zIndex: 0 }}
                     required
-                    disabled={isPedagogical}
+                    disabled={isNotPedagogical}
                   />
                 </div>
               </li>
@@ -687,7 +782,7 @@ export default function EditLessons() {
                     onChange={handleChange('questions_obs')}
                     style={{ zIndex: 0, marginTop: '33px' }}
                     required
-                    disabled={isPedagogical}
+                    disabled={isNotPedagogical}
                   />
                 </div>
               </li>
@@ -718,12 +813,24 @@ export default function EditLessons() {
                     onChange={handleChange('questions_feedback_obs')}
                     style={{ zIndex: 0, marginTop: '33px' }}
                     required
-                    disabled={isPedagogical}
+                    disabled={isNotPedagogical}
                   />
                 </div>
               </li>
             </ul>
             <div className={classes.content}>
+              {!isNotPedagogical && (
+                <Select
+                  classNamePrefix="selecione"
+                  isSearchable
+                  name="color"
+                  options={statusOptions}
+                  value={statusSelected}
+                  onChange={handleSelectStatus}
+                  required
+                />
+              )}
+
               <Button
                 onClick={() => history.push('/dashboard')}
                 className={classes.backButton}

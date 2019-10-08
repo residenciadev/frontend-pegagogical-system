@@ -61,6 +61,11 @@ export const Container = styled.div`
     }
   }
 
+  .selecione__control {
+    width: 200px;
+    margin-right: 10px;
+  }
+
   @media screen and (max-width: 768px) {
     width: 100%;
     .item {

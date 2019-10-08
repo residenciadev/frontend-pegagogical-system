@@ -23,15 +23,17 @@ export default function Dashboard() {
       <Container>
         <h1>Aulas</h1>
         <div>
-          <Link to="/new-lessons">
-            <ButtonCreate
-              aria-label="add"
-              variant="contained"
-              onClick={() => {}}
-            >
-              Nova Aula
-            </ButtonCreate>
-          </Link>
+          {profile.type === 'teacher' && (
+            <Link to="/new-lessons">
+              <ButtonCreate
+                aria-label="add"
+                variant="contained"
+                onClick={() => {}}
+              >
+                Nova Aula
+              </ButtonCreate>
+            </Link>
+          )}
         </div>
       </Container>
       <Wrapper>
