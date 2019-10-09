@@ -159,12 +159,19 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <Link className={classes.link} to="/users">
-        <MenuItem onClick={handleMenuClose}>Gerenciar usuários</MenuItem>
-      </Link>
       <Link className={classes.link} to="/profile">
-        <MenuItem onClick={handleMenuClose}>Perfil</MenuItem>
+        <MenuItem onClick={handleMenuClose}>Meu Perfil</MenuItem>
       </Link>
+      {profile.type === 'pedagogical' && (
+        <>
+          <Link className={classes.link} to="/users">
+            <MenuItem onClick={handleMenuClose}>Gerenciar Usuários</MenuItem>
+          </Link>
+          <Link className={classes.link} to="/courses">
+            <MenuItem onClick={handleMenuClose}>Gerenciar Módulos</MenuItem>
+          </Link>
+        </>
+      )}
 
       <MenuItem onClick={handleLeave}>Sair</MenuItem>
     </Menu>
@@ -181,12 +188,19 @@ export default function PrimarySearchAppBar() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <Link className={classes.link} to="/users">
-        <MenuItem onClick={handleMenuClose}>Gerenciar usuários</MenuItem>
-      </Link>
       <Link className={classes.link} to="/profile">
-        <MenuItem onClick={handleProfileMenuOpen}>Perfil</MenuItem>
+        <MenuItem onClick={handleProfileMenuOpen}>Meu Perfil</MenuItem>
       </Link>
+      {profile.type === 'pedagogical' && (
+        <>
+          <Link className={classes.link} to="/users">
+            <MenuItem onClick={handleMenuClose}>Gerenciar Usuários</MenuItem>
+          </Link>
+          <Link className={classes.link} to="/courses">
+            <MenuItem onClick={handleMenuClose}>Gerenciar Módulos</MenuItem>
+          </Link>
+        </>
+      )}
       <MenuItem onClick={handleLeave}>Sair</MenuItem>
     </Menu>
   );

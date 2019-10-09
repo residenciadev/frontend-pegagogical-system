@@ -59,10 +59,10 @@ export default function EditLessons() {
     material_obs: '',
     material_complementary_obs: '',
     images_obs: '',
-    backgroundImages_obs: '',
+    background_images_obs: '',
     answers_obs: '',
     questions_obs: '',
-    videos_obs: '',
+    video_obs: '',
   });
   const [state, setState] = useState({
     dropbox: true,
@@ -213,7 +213,7 @@ export default function EditLessons() {
       material_complementary_obs,
       images_obs,
       images_background_obs,
-      videos_obs,
+      video_obs,
       questions_obs,
       answers_obs,
     } = values;
@@ -230,13 +230,15 @@ export default function EditLessons() {
       backgroundImages,
       videos
     );
-
+    const selected = statusSelected.value;
+    console.log(selected);
     const dropbox = data
       .filter(element => element.id !== undefined)
       .map(element => element.id);
     try {
       const response = await api.put(
-        `lessons/${lessonsId}/content/${contentId}?status=${statusSelected.value}`,
+        `lessons/${lessonsId}/content/${contentId}?status=${selected ||
+          statusOptions[0].value}`,
         {
           theme,
           skills,
@@ -254,7 +256,7 @@ export default function EditLessons() {
           images_background: true,
           images_background_obs,
           video: true,
-          videos_obs,
+          video_obs,
           dropbox,
         }
       );
@@ -281,7 +283,7 @@ export default function EditLessons() {
           response.data.material_complementary_obs || '',
         images_obs: response.data.images_obs || '',
         images_background_obs: response.data.images_background_obs || '',
-        videos_obs: response.data.videos_obs || '',
+        video_obs: response.data.video_obs || '',
         questions_obs: response.data.questions_obs || '',
         answers_obs: response.data.answers_obs || '',
       });
@@ -304,17 +306,33 @@ export default function EditLessons() {
           videos: dropboxUploaded.filter(element => element.type === 'videos'),
         };
       });
-      // console.log(response.data);
-      const questionsParse = JSON.parse(response.data.questions);
-      const answersParse = JSON.parse(response.data.answers);
-      setQuestions(questionsParse.content);
-      setAnswers(answersParse.content);
+
+      function IsJsonString(str) {
+        try {
+          JSON.parse(str);
+        } catch (e) {
+          return false;
+        }
+        return true;
+      }
+
+      const questionsParse = IsJsonString(response.data.questions)
+        ? JSON.parse(response.data.questions)
+        : response.data.questions;
+      const answersParse = IsJsonString(response.data.answers)
+        ? JSON.parse(response.data.answers)
+        : response.data.answers;
+
+      setQuestions(
+        questionsParse.content ? questionsParse.content : questionsParse
+      );
+      setAnswers(answersParse.content ? answersParse.content : answersParse);
       setIsNotPedagogical(!(userType === 'pedagogical'));
       setLoading(false);
     }
     loadData(lessonsId);
   }, [match, profile]);
-  // console.log(dataContent);
+  console.log(dataContent);
   // console.log('up', dataContent);
   // console.log('up', answers);
 
@@ -435,10 +453,9 @@ export default function EditLessons() {
                     rows="4"
                     placeholder="O que o aluno irá aprender com a aula?"
                     className={classes.textField}
-                    value={values.skills}
-                    onChange={handleChange('skills')}
+                    value={values.skills_obs}
+                    onChange={handleChange('skills_obs')}
                     style={{ zIndex: 0 }}
-                    required
                     disabled={isNotPedagogical}
                   />
                 </div>
@@ -661,8 +678,8 @@ export default function EditLessons() {
                     rowsMax="4"
                     rows="4"
                     className={classes.textField}
-                    value={values.backgroundImages_obs}
-                    onChange={handleChange('backgroundImages_obs')}
+                    value={values.images_background_obs}
+                    onChange={handleChange('images_background_obs')}
                     style={{ zIndex: 0 }}
                     required
                     disabled={isNotPedagogical}
@@ -747,8 +764,8 @@ export default function EditLessons() {
                     rowsMax="4"
                     rows="4"
                     className={classes.textField}
-                    value={values.videos_obs}
-                    onChange={handleChange('videos_obs')}
+                    value={values.video_obs}
+                    onChange={handleChange('video_obs')}
                     style={{ zIndex: 0 }}
                     required
                     disabled={isNotPedagogical}
@@ -809,8 +826,8 @@ export default function EditLessons() {
                     rowsMax="4"
                     rows="4"
                     className={classes.textField}
-                    value={values.questions_feedback_obs}
-                    onChange={handleChange('questions_feedback_obs')}
+                    value={values.answers_obs}
+                    onChange={handleChange('answers_obs')}
                     style={{ zIndex: 0, marginTop: '33px' }}
                     required
                     disabled={isNotPedagogical}
