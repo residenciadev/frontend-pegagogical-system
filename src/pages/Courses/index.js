@@ -1,18 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { emphasize, makeStyles, useTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import NoSsr from '@material-ui/core/NoSsr';
-import TextField from '@material-ui/core/TextField';
-import Paper from '@material-ui/core/Paper';
-import Chip from '@material-ui/core/Chip';
-import MenuItem from '@material-ui/core/MenuItem';
-import CancelIcon from '@material-ui/icons/Cancel';
 import Select from 'react-select';
 import Tooltip from '@material-ui/core/Tooltip';
+import AsyncSelect from 'react-select/async';
 
 import { IconButton } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
+import api from '../../services/api';
 import { Container } from './styles';
 
 const useStyles = makeStyles(theme => ({
@@ -75,23 +71,29 @@ const useStyles = makeStyles(theme => ({
 
 export default function Courses() {
   const classes = useStyles();
-  const theme = useTheme();
-  const [single, setSingle] = React.useState(null);
-  const options = [{ value: 'gean', label: 'gean' }];
-
-  const selectStyles = {
-    input: base => ({
-      ...base,
-      color: theme.palette.text.primary,
-      '& input': {
-        font: 'inherit',
-      },
-    }),
-  };
+  const [single, setSingle] = useState(null);
+  const [options, setOptions] = useState([{ value: '', label: '' }]);
+  const [loading, setLoading] = useState(true);
 
   const handleChangeSingle = value => {
     setSingle(value);
   };
+
+  useEffect(() => {
+    async function load() {
+      const response = await api.get('/courses');
+      const option = response.data.map(e => {
+        return { value: e.id, label: e.name };
+      });
+      setOptions(prevState => {
+        return { ...prevState, ...option };
+      });
+      setLoading(false);
+    }
+    load();
+  }, [setOptions]);
+
+  console.log(options);
   return (
     <>
       <Container>
@@ -106,10 +108,12 @@ export default function Courses() {
             classNamePrefix="select"
             inputId="react-select-multiple"
             placeholder="Selecione um Curso"
+            isLoading={loading}
             options={options}
             value={single}
             onChange={handleChangeSingle}
           />
+
           <IconButton color="primary">
             <AddIcon />
           </IconButton>
