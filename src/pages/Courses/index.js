@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { emphasize, makeStyles, useTheme } from '@material-ui/core/styles';
+import { emphasize, makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Select from 'react-select';
 import Tooltip from '@material-ui/core/Tooltip';
-import AsyncSelect from 'react-select/async';
 
 import { IconButton } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
 import api from '../../services/api';
 import { Container } from './styles';
+import Table from './table';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -71,67 +71,118 @@ const useStyles = makeStyles(theme => ({
 
 export default function Courses() {
   const classes = useStyles();
-  const [single, setSingle] = useState(null);
-  const [options, setOptions] = useState([{ value: '', label: '' }]);
-  const [loading, setLoading] = useState(true);
+  const [curseSelected, setCurseSelected] = useState(null);
+  const [cursesOptions, setCursesOptions] = useState([
+    { id: '', value: '', label: '' },
+  ]);
+  const [courseLoading, setCourseLoading] = useState(true);
 
-  const handleChangeSingle = value => {
-    setSingle(value);
+  const [blockSelected, setBlockSelected] = useState(null);
+  const [blocksOptions, setBlocksOptions] = useState([
+    { id: '', value: '', label: '' },
+  ]);
+  const [blockLoading, setBlockLoading] = useState(true);
+
+  const [moduleSelected, setModuleSelected] = useState(null);
+  const [modulesOptions, setModulesOptions] = useState([
+    { id: '', value: '', label: '' },
+  ]);
+  const [moduleLoading, setModuleLoading] = useState(true);
+
+  const [tableData, setTableData] = useState([]);
+  const [tableLoading, setTableLoading] = useState(true);
+
+  async function loadBlock(courseId) {
+    const response = await api.get(`blocks?courseId=${courseId}`);
+    const option = response.data.map(e => {
+      return { id: e.id, value: e.id, label: e.name };
+    });
+    setBlocksOptions(option);
+    setBlockLoading(false);
+  }
+
+  async function loadModules(blockId) {
+    const response = await api.get(`modules?blockId=${blockId}`);
+    const option = response.data.map(e => {
+      return { id: e.id, value: e.id, label: e.name };
+    });
+    setModulesOptions(option);
+    setModuleLoading(false);
+  }
+
+  async function loadLessons(moduleId) {
+    const response = await api.get(`modules/${moduleId}`);
+    console.log(response.data);
+    setTableData(response.data.lessons);
+    setTableLoading(false);
+  }
+
+  const handleChangeCourse = value => {
+    setCurseSelected(value);
+    setBlockSelected([]);
+    setModuleSelected([]);
+    loadBlock(value.id);
+  };
+  const handleChangeBlock = value => {
+    setBlockSelected(value);
+    setModuleSelected([]);
+    loadModules(value.id);
+  };
+  const handleChangeModule = value => {
+    setModuleSelected(value);
+    loadLessons(value.id);
   };
 
   useEffect(() => {
     async function load() {
       const response = await api.get('/courses');
       const option = response.data.map(e => {
-        return { value: e.id, label: e.name };
+        return { id: e.id, value: e.id, label: e.name };
       });
-      setOptions(prevState => {
-        return { ...prevState, ...option };
-      });
-      setLoading(false);
+      setCursesOptions(option);
+      setCourseLoading(false);
     }
     load();
-  }, [setOptions]);
+    loadLessons(1);
+  }, [setCursesOptions]);
 
-  console.log(options);
   return (
     <>
       <Container>
         <Typography className={classes.title} variant="h1" component="h2">
           Curso/Bloco/Disciplina
         </Typography>
-        <div className="content">
-          <Select
-            // classes={classes}
-            // styles={selectStyles}
-            className="basic-single"
-            classNamePrefix="select"
-            inputId="react-select-multiple"
-            placeholder="Selecione um Curso"
-            isLoading={loading}
-            options={options}
-            value={single}
-            onChange={handleChangeSingle}
-          />
+        {!courseLoading && (
+          <div className="content">
+            <Select
+              className="basic-single"
+              classNamePrefix="select"
+              inputId="react-select-multiple"
+              placeholder="Selecione um Curso"
+              isLoading={courseLoading}
+              options={cursesOptions}
+              value={curseSelected}
+              onChange={handleChangeCourse}
+            />
+            <IconButton color="primary">
+              <AddIcon />
+            </IconButton>
+            <IconButton>
+              <EditIcon />
+            </IconButton>
+          </div>
+        )}
 
-          <IconButton color="primary">
-            <AddIcon />
-          </IconButton>
-          <IconButton>
-            <EditIcon />
-          </IconButton>
-        </div>
         <div className="content">
           <Select
-            // classes={classes}
-            // styles={selectStyles}
             className="basic-single"
             classNamePrefix="select"
             inputId="react-select-multiple"
             placeholder="Selecione o Bloco"
-            options={options}
-            value={single}
-            onChange={handleChangeSingle}
+            options={blocksOptions}
+            value={blockSelected}
+            onChange={handleChangeBlock}
+            isDisabled={blockLoading}
           />
           <Tooltip title="Add" aria-label="add">
             <IconButton color="primary">
@@ -142,17 +193,17 @@ export default function Courses() {
             <EditIcon />
           </IconButton>
         </div>
+
         <div className="content">
           <Select
-            // classes={classes}
-            // styles={selectStyles}
             className="basic-single"
             classNamePrefix="select"
             inputId="react-select-multiple"
             placeholder="Selecione o Módulo"
-            options={options}
-            value={single}
-            onChange={handleChangeSingle}
+            options={modulesOptions}
+            value={moduleSelected}
+            onChange={handleChangeModule}
+            isDisabled={moduleLoading}
           />
           <IconButton color="primary">
             <AddIcon />
@@ -162,6 +213,7 @@ export default function Courses() {
           </IconButton>
         </div>
       </Container>
+      {!tableLoading && tableData && <Table data={tableData} />}
     </>
   );
 }

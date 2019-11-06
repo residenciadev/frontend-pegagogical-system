@@ -280,7 +280,6 @@ export default function Lessons() {
           setMessage('');
         }, 5000);
       } else {
-        console.log('entrou');
         setActiveStep(prevActiveStep => prevActiveStep + 1);
       }
     }
@@ -413,8 +412,7 @@ export default function Lessons() {
         return 'Uknown stepIndex';
     }
   }
-  console.log(questions);
-  console.log('a', answers);
+  console.log(profile);
   return (
     <div className={classes.root}>
       <Stepper activeStep={activeStep} alternativeLabel>
