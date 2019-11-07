@@ -3,12 +3,14 @@ import { emphasize, makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Select from 'react-select';
 import Tooltip from '@material-ui/core/Tooltip';
-
+import useReactRouter from 'use-react-router';
 import { IconButton } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
+import { toast } from 'react-toastify';
+import Modal from '../../components/Modal';
 import api from '../../services/api';
-import { Container } from './styles';
+import { Container, MdButton } from './styles';
 import Table from './table';
 
 const useStyles = makeStyles(theme => ({
@@ -71,8 +73,9 @@ const useStyles = makeStyles(theme => ({
 
 export default function Courses() {
   const classes = useStyles();
-  const [curseSelected, setCurseSelected] = useState(null);
-  const [cursesOptions, setCursesOptions] = useState([
+  const { history } = useReactRouter();
+  const [courseSelected, setCourseSelected] = useState(null);
+  const [coursesOptions, setCoursesOptions] = useState([
     { id: '', value: '', label: '' },
   ]);
   const [courseLoading, setCourseLoading] = useState(true);
@@ -92,6 +95,49 @@ export default function Courses() {
   const [tableData, setTableData] = useState([]);
   const [tableLoading, setTableLoading] = useState(true);
 
+  const [title, setTitle] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpenEdit, setModalOpenEdit] = useState(false);
+  const [modalData, setModalData] = useState({
+    id: '',
+    type: '',
+    name: '',
+  });
+  const [disableButton, setDisableButton] = useState({
+    courseCreate: false,
+    blockCreate: true,
+    moduleCreate: true,
+    courseEdit: true,
+    blockEdit: true,
+    moduleEdit: true,
+  });
+
+  const handleOpen = (e, id, name, type) => {
+    setModalData({ id, name, type });
+    setModalOpen(true);
+  };
+
+  const handleClose = () => {
+    setModalOpen(false);
+  };
+
+  const handleOpenEdit = (e, id, name, type) => {
+    setModalData({ id, name, type });
+    setModalOpenEdit(true);
+  };
+
+  const handleCloseEdit = () => {
+    setModalOpenEdit(false);
+  };
+
+  async function loadCourse() {
+    const response = await api.get('/courses');
+    const option = response.data.map(e => {
+      return { id: e.id, value: e.id, label: e.name };
+    });
+    setCoursesOptions(option);
+    setCourseLoading(false);
+  }
   async function loadBlock(courseId) {
     const response = await api.get(`blocks?courseId=${courseId}`);
     const option = response.data.map(e => {
@@ -112,26 +158,148 @@ export default function Courses() {
 
   async function loadLessons(moduleId) {
     const response = await api.get(`modules/${moduleId}`);
-    console.log(response.data);
     setTableData(response.data.lessons);
     setTableLoading(false);
   }
 
   const handleChangeCourse = value => {
-    setCurseSelected(value);
+    setCourseSelected(value);
     setBlockSelected([]);
     setModuleSelected([]);
+    setDisableButton(prevState => {
+      return {
+        ...prevState,
+        courseCreate: false,
+        courseEdit: false,
+        blockCreate: false,
+      };
+    });
     loadBlock(value.id);
   };
   const handleChangeBlock = value => {
     setBlockSelected(value);
     setModuleSelected([]);
+    setDisableButton(prevState => {
+      return {
+        ...prevState,
+        courseEdit: false,
+        blockCreate: false,
+        blockEdit: false,
+        moduleCreate: false,
+      };
+    });
     loadModules(value.id);
   };
   const handleChangeModule = value => {
     setModuleSelected(value);
+    setDisableButton(prevState => {
+      return {
+        ...prevState,
+        courseEdit: false,
+        blockCreate: false,
+        blockEdit: false,
+        moduleEdit: false,
+      };
+    });
     loadLessons(value.id);
   };
+
+  async function handleSubmit(e, type) {
+    e.preventDefault();
+    if (type === 'course') {
+      try {
+        api.post('courses', {
+          name: title,
+        });
+        toast.success('Curso criado com sucesso!');
+        loadCourse();
+        setModalOpen(false);
+      } catch (error) {
+        setModalOpen(false);
+        toast.error('Falha ao criar!');
+      }
+    }
+    if (type === 'block') {
+      try {
+        api.post('blocks', {
+          name: title,
+          course_id: courseSelected.id,
+        });
+        toast.success('Bloco criado com sucesso!');
+
+        setModalOpen(false);
+        loadBlock(courseSelected.id);
+      } catch (error) {
+        setModalOpen(false);
+        toast.error('Falha ao criar!');
+      }
+    }
+    if (type === 'module') {
+      try {
+        api.post('modules', {
+          name: title,
+          block_id: blockSelected.id,
+        });
+        toast.success('Disciplina criada com sucesso!');
+        setModalOpen(false);
+        loadModules(blockSelected.id);
+      } catch (error) {
+        setModalOpen(false);
+        toast.error('Falha ao criar!');
+      }
+    }
+  }
+
+  async function handleEdit(e, type) {
+    e.preventDefault();
+    if (type === 'course') {
+      try {
+        api.put(`courses/${courseSelected.id}`, {
+          name: title,
+        });
+        toast.success('Curso editado com sucesso!');
+        setTimeout(() => {
+          history.go('/courses');
+        }, 1000);
+        setModalOpenEdit(false);
+      } catch (error) {
+        setModalOpenEdit(false);
+        toast.error('Falha ao editar!');
+      }
+    }
+    if (type === 'block') {
+      try {
+        api.put(`blocks/${blockSelected.id}`, {
+          name: title,
+        });
+        toast.success('Bloco editado com sucesso!');
+
+        setModalOpenEdit(false);
+        setTimeout(() => {
+          history.go('/courses');
+        }, 1000);
+      } catch (error) {
+        setModalOpenEdit(false);
+        toast.error('Falha ao editar!');
+      }
+    }
+    if (type === 'module') {
+      try {
+        api.put(`modules/${moduleSelected.id}`, {
+          name: title,
+        });
+        toast.success('Disciplina editado com sucesso!');
+        setModalOpenEdit(false);
+        setTimeout(() => {
+          history.go('/courses');
+        }, 1000);
+        loadModules(blockSelected.id);
+      } catch (error) {
+        setModalOpenEdit(false);
+        toast.error('Falha ao editar!');
+      }
+    }
+  }
 
   useEffect(() => {
     async function load() {
@@ -139,12 +307,12 @@ export default function Courses() {
       const option = response.data.map(e => {
         return { id: e.id, value: e.id, label: e.name };
       });
-      setCursesOptions(option);
+      setCoursesOptions(option);
       setCourseLoading(false);
     }
     load();
     loadLessons(1);
-  }, [setCursesOptions]);
+  }, []);
 
   return (
     <>
@@ -160,16 +328,36 @@ export default function Courses() {
               inputId="react-select-multiple"
               placeholder="Selecione um Curso"
               isLoading={courseLoading}
-              options={cursesOptions}
-              value={curseSelected}
+              options={coursesOptions}
+              value={courseSelected}
               onChange={handleChangeCourse}
             />
-            <IconButton color="primary">
-              <AddIcon />
-            </IconButton>
-            <IconButton>
-              <EditIcon />
-            </IconButton>
+            <Tooltip title="Criar curso">
+              <span>
+                <IconButton
+                  color="primary"
+                  id="create-course"
+                  disabled={disableButton.courseCreate}
+                  onClick={e => handleOpen(e, '', 'Curso', 'course')}
+                >
+                  <AddIcon />
+                </IconButton>
+              </span>
+            </Tooltip>
+            <Tooltip title="Editar curso">
+              <span>
+                <IconButton
+                  id="edit-course"
+                  disabled={disableButton.courseEdit}
+                  onClick={e => {
+                    handleOpenEdit(e, '', 'Curso', 'course');
+                    setTitle(courseSelected.label);
+                  }}
+                >
+                  <EditIcon />
+                </IconButton>
+              </span>
+            </Tooltip>
           </div>
         )}
 
@@ -178,20 +366,38 @@ export default function Courses() {
             className="basic-single"
             classNamePrefix="select"
             inputId="react-select-multiple"
-            placeholder="Selecione o Bloco"
+            placeholder="Selecione um Bloco"
             options={blocksOptions}
             value={blockSelected}
             onChange={handleChangeBlock}
             isDisabled={blockLoading}
           />
-          <Tooltip title="Add" aria-label="add">
-            <IconButton color="primary">
-              <AddIcon />
-            </IconButton>
+          <Tooltip title="Criar bloco">
+            <span>
+              <IconButton
+                color="primary"
+                id="create-block"
+                disabled={disableButton.blockCreate}
+                onClick={e => handleOpen(e, '', 'Bloco', 'block')}
+              >
+                <AddIcon />
+              </IconButton>
+            </span>
           </Tooltip>
-          <IconButton>
-            <EditIcon />
-          </IconButton>
+          <Tooltip title="Editar bloco">
+            <span>
+              <IconButton
+                id="edit-block"
+                disabled={disableButton.blockEdit}
+                onClick={e => {
+                  handleOpenEdit(e, '', 'Bloco', 'block');
+                  setTitle(blockSelected.label);
+                }}
+              >
+                <EditIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
         </div>
 
         <div className="content">
@@ -199,21 +405,103 @@ export default function Courses() {
             className="basic-single"
             classNamePrefix="select"
             inputId="react-select-multiple"
-            placeholder="Selecione o Módulo"
+            placeholder="Selecione uma Disciplina"
             options={modulesOptions}
             value={moduleSelected}
             onChange={handleChangeModule}
             isDisabled={moduleLoading}
           />
-          <IconButton color="primary">
-            <AddIcon />
-          </IconButton>
-          <IconButton>
-            <EditIcon />
-          </IconButton>
+          <Tooltip title="Criar Disciplina">
+            <span>
+              <IconButton
+                color="primary"
+                id="create-module"
+                disabled={disableButton.moduleCreate}
+                onClick={e => handleOpen(e, '', 'Disciplina', 'module')}
+              >
+                <AddIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
+          <Tooltip title="Editar Disciplina">
+            <span>
+              <IconButton
+                id="edit-module"
+                disabled={disableButton.moduleEdit}
+                onClick={e => {
+                  handleOpenEdit(e, '', 'Disciplina', 'module');
+                  setTitle(moduleSelected.label);
+                }}
+              >
+                <EditIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
         </div>
       </Container>
       {!tableLoading && tableData && <Table data={tableData} />}
+      <Modal
+        open={modalOpen}
+        handleClose={handleClose}
+        title={`Digite o nome do ${modalData.name}`}
+      >
+        <form
+          action="post"
+          method="post"
+          onSubmit={e => handleSubmit(e, modalData.type)}
+        >
+          <input
+            placeholder={`Digite o nome do ${modalData.name}`}
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+          />
+          <hr />
+          <div className="content-btn">
+            <MdButton variant="contained" color="primary" type="submit">
+              Criar
+            </MdButton>
+            <MdButton
+              variant="outlined"
+              color="primary"
+              type="button"
+              onClick={handleClose}
+            >
+              Cancelar
+            </MdButton>
+          </div>
+        </form>
+      </Modal>
+      <Modal
+        open={modalOpenEdit}
+        handleClose={handleCloseEdit}
+        title={`Digite o nome do ${modalData.name}`}
+      >
+        <form
+          action="put"
+          method="put"
+          onSubmit={e => handleEdit(e, modalData.type)}
+        >
+          <input
+            placeholder={`Digite o nome do ${modalData.name}`}
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+          />
+          <hr />
+          <div className="content-btn">
+            <MdButton variant="contained" color="primary" type="submit">
+              Editar
+            </MdButton>
+            <MdButton
+              variant="outlined"
+              color="primary"
+              type="button"
+              onClick={handleCloseEdit}
+            >
+              Cancelar
+            </MdButton>
+          </div>
+        </form>
+      </Modal>
     </>
   );
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Icon from '@material-ui/core/Icon';
 import CloseIcon from '@material-ui/icons/Close';
@@ -16,7 +16,7 @@ function getModalStyle() {
 }
 
 export default function Modal({ open, handleClose, children, title }) {
-  const [modalStyle] = React.useState(getModalStyle);
+  const [modalStyle] = useState(getModalStyle);
 
   return (
     <Container>

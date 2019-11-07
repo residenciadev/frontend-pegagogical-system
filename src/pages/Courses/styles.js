@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import Button from '@material-ui/core/Button';
 
 export const Container = styled.div`
   max-width: 500px;
@@ -12,5 +13,38 @@ export const Container = styled.div`
   }
   .basic-single {
     width: 100%;
+  }
+`;
+
+export const MdButton = styled(Button)`
+  border-radius: 4px;
+  height: 38px;
+
+  &.MuiButton-contained {
+    margin-right: 8px;
+    box-shadow: none;
+
+    &:hover {
+      box-shadow: none;
+    }
+  }
+  &.MuiButton-outlined {
+    border: 1px solid '#2196f3';
+    box-sizing: border-box;
+    background: '#063057';
+    border-radius: 4px;
+    span {
+      font-family: Source Sans Pro;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 18px;
+      text-align: center;
+      text-transform: uppercase;
+      color: '#2196f3';
+    }
+    &:hover {
+      background: '#063057';
+    }
   }
 `;

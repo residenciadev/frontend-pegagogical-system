@@ -10,12 +10,7 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import PropTypes from 'prop-types';
-import { NavLink } from 'react-router-dom';
 
 import formatDate from '../../../utils/formatDate';
 
@@ -187,33 +182,12 @@ export default function EnhancedTable({ data: rows, loadData }) {
   const [orderBy, setOrderBy] = React.useState('id');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  const [values, setValues] = useState({
-    id: '',
-    name: '',
-    surname: '',
-    email: '',
-    password: '',
-  });
-
-  function handleChangePage(event, newPage) {
-    setPage(newPage);
-  }
-
-  function handleChangeRowsPerPage(event) {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  }
 
   function handleRequestSort(event, property) {
     const isDesc = orderBy === property && order === 'desc';
     setOrder(isDesc ? 'asc' : 'desc');
     setOrderBy(property);
   }
-
-  const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
   const isSelected = name => selected.indexOf(name) !== -1;
 
@@ -237,9 +211,8 @@ export default function EnhancedTable({ data: rows, loadData }) {
 
             <TableBody>
               {rows &&
-                stableSort(rows, getSorting(order, orderBy))
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, index) => {
+                stableSort(rows, getSorting(order, orderBy)).map(
+                  (row, index) => {
                     const labelId = `enhanced-table-checkbox-${index}`;
                     const isItemSelected = isSelected(row.id);
                     return (
@@ -259,16 +232,12 @@ export default function EnhancedTable({ data: rows, loadData }) {
                         <TableCell align="left">{row.created_at}</TableCell>
                       </TableRow>
                     );
-                  })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 49 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
+                  }
+                )}
             </TableBody>
           </Table>
         </div>
-        <TablePagination
+        {/* <TablePagination
           rowsPerPageOptions={[5, 10, 50]}
           component="div"
           count={rows.length}
@@ -282,7 +251,7 @@ export default function EnhancedTable({ data: rows, loadData }) {
           }}
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
+        /> */}
       </Paper>
     </div>
   );

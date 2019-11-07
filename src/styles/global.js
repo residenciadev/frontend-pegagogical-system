@@ -19,6 +19,7 @@ html,body, #root{
 }
 
 body{
+  @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap');
     text-rendering: optimizeLegibility ;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;  
