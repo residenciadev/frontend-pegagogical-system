@@ -7,11 +7,13 @@ import useReactRouter from 'use-react-router';
 import { IconButton } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import { toast } from 'react-toastify';
 import Modal from '../../components/Modal';
 import api from '../../services/api';
-import { Container, MdButton } from './styles';
+import { Container, ContentSelect, MdButton } from './styles';
 import Table from './table';
+import ModalTeachers from './ModalTeachers';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -86,7 +88,11 @@ export default function Courses() {
   ]);
   const [blockLoading, setBlockLoading] = useState(true);
 
-  const [moduleSelected, setModuleSelected] = useState(null);
+  const [moduleSelected, setModuleSelected] = useState({
+    id: '',
+    value: '',
+    label: '',
+  });
   const [modulesOptions, setModulesOptions] = useState([
     { id: '', value: '', label: '' },
   ]);
@@ -112,6 +118,9 @@ export default function Courses() {
     moduleEdit: true,
   });
 
+  const [teachers, setTeachers] = useState([]);
+  const [modalOpenTeacher, setModalOpenTeacher] = useState(false);
+
   const handleOpen = (e, id, name, type) => {
     setModalData({ id, name, type });
     setModalOpen(true);
@@ -119,6 +128,13 @@ export default function Courses() {
 
   const handleClose = () => {
     setModalOpen(false);
+  };
+
+  const handleOpenTeacher = () => {
+    setModalOpenTeacher(true);
+  };
+  const handleCloseTeacher = () => {
+    setModalOpenTeacher(false);
   };
 
   const handleOpenEdit = (e, id, name, type) => {
@@ -129,6 +145,13 @@ export default function Courses() {
   const handleCloseEdit = () => {
     setModalOpenEdit(false);
   };
+
+  async function loadTeachers() {
+    try {
+      const response = await api.get('/users');
+      setTeachers(response.data);
+    } catch (error) {}
+  }
 
   async function loadCourse() {
     const response = await api.get('/courses');
@@ -317,41 +340,82 @@ export default function Courses() {
   return (
     <>
       <Container>
-        <Typography className={classes.title} variant="h1" component="h2">
-          Curso/Bloco/Disciplina
-        </Typography>
-        {!courseLoading && (
+        <ContentSelect>
+          <Typography className={classes.title} variant="h1" component="h2">
+            Curso/Bloco/Disciplina
+          </Typography>
+          {!courseLoading && (
+            <div className="content">
+              <Select
+                className="basic-single"
+                classNamePrefix="select"
+                inputId="react-select-multiple"
+                placeholder="Selecione um Curso"
+                isLoading={courseLoading}
+                options={coursesOptions}
+                value={courseSelected}
+                onChange={handleChangeCourse}
+              />
+              <Tooltip title="Criar curso">
+                <span>
+                  <IconButton
+                    color="primary"
+                    id="create-course"
+                    disabled={disableButton.courseCreate}
+                    onClick={e => handleOpen(e, '', 'Curso', 'course')}
+                  >
+                    <AddIcon />
+                  </IconButton>
+                </span>
+              </Tooltip>
+              <Tooltip title="Editar curso">
+                <span>
+                  <IconButton
+                    id="edit-course"
+                    disabled={disableButton.courseEdit}
+                    onClick={e => {
+                      handleOpenEdit(e, '', 'Curso', 'course');
+                      setTitle(courseSelected.label);
+                    }}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            </div>
+          )}
+
           <div className="content">
             <Select
               className="basic-single"
               classNamePrefix="select"
               inputId="react-select-multiple"
-              placeholder="Selecione um Curso"
-              isLoading={courseLoading}
-              options={coursesOptions}
-              value={courseSelected}
-              onChange={handleChangeCourse}
+              placeholder="Selecione um Bloco"
+              options={blocksOptions}
+              value={blockSelected}
+              onChange={handleChangeBlock}
+              isDisabled={blockLoading}
             />
-            <Tooltip title="Criar curso">
+            <Tooltip title="Criar bloco">
               <span>
                 <IconButton
                   color="primary"
-                  id="create-course"
-                  disabled={disableButton.courseCreate}
-                  onClick={e => handleOpen(e, '', 'Curso', 'course')}
+                  id="create-block"
+                  disabled={disableButton.blockCreate}
+                  onClick={e => handleOpen(e, '', 'Bloco', 'block')}
                 >
                   <AddIcon />
                 </IconButton>
               </span>
             </Tooltip>
-            <Tooltip title="Editar curso">
+            <Tooltip title="Editar bloco">
               <span>
                 <IconButton
-                  id="edit-course"
-                  disabled={disableButton.courseEdit}
+                  id="edit-block"
+                  disabled={disableButton.blockEdit}
                   onClick={e => {
-                    handleOpenEdit(e, '', 'Curso', 'course');
-                    setTitle(courseSelected.label);
+                    handleOpenEdit(e, '', 'Bloco', 'block');
+                    setTitle(blockSelected.label);
                   }}
                 >
                   <EditIcon />
@@ -359,87 +423,70 @@ export default function Courses() {
               </span>
             </Tooltip>
           </div>
-        )}
 
-        <div className="content">
-          <Select
-            className="basic-single"
-            classNamePrefix="select"
-            inputId="react-select-multiple"
-            placeholder="Selecione um Bloco"
-            options={blocksOptions}
-            value={blockSelected}
-            onChange={handleChangeBlock}
-            isDisabled={blockLoading}
+          <div className="content">
+            <Select
+              className="basic-single"
+              classNamePrefix="select"
+              inputId="react-select-multiple"
+              placeholder="Selecione uma Disciplina"
+              options={modulesOptions}
+              value={moduleSelected}
+              onChange={handleChangeModule}
+              isDisabled={moduleLoading}
+            />
+            <Tooltip title="Criar Disciplina">
+              <span>
+                <IconButton
+                  color="primary"
+                  id="create-module"
+                  disabled={disableButton.moduleCreate}
+                  onClick={e => handleOpen(e, '', 'Disciplina', 'module')}
+                >
+                  <AddIcon />
+                </IconButton>
+              </span>
+            </Tooltip>
+            <Tooltip title="Editar Disciplina">
+              <span>
+                <IconButton
+                  id="edit-module"
+                  disabled={disableButton.moduleEdit}
+                  onClick={e => {
+                    handleOpenEdit(e, '', 'Disciplina', 'module');
+                    setTitle(moduleSelected.label);
+                  }}
+                >
+                  <EditIcon />
+                </IconButton>
+              </span>
+            </Tooltip>
+            <Tooltip title="Adicionar professor a disciplina">
+              <span>
+                <IconButton
+                  id="edit-module"
+                  disabled={disableButton.moduleEdit}
+                  onClick={e => {
+                    loadTeachers();
+                    handleOpenTeacher(e, '', 'Disciplina', 'module');
+                  }}
+                >
+                  <PersonAddIcon />
+                </IconButton>
+              </span>
+            </Tooltip>
+          </div>
+          {!tableLoading && tableData && <Table data={tableData} />}
+        </ContentSelect>
+        <div className="content-right" show={`${modalOpenTeacher}`}>
+          <ModalTeachers
+            open={modalOpenTeacher}
+            handleClose={handleCloseTeacher}
+            teachers={teachers.filter(t => t.type === 'teacher')}
+            moduleId={moduleSelected.id || 0}
           />
-          <Tooltip title="Criar bloco">
-            <span>
-              <IconButton
-                color="primary"
-                id="create-block"
-                disabled={disableButton.blockCreate}
-                onClick={e => handleOpen(e, '', 'Bloco', 'block')}
-              >
-                <AddIcon />
-              </IconButton>
-            </span>
-          </Tooltip>
-          <Tooltip title="Editar bloco">
-            <span>
-              <IconButton
-                id="edit-block"
-                disabled={disableButton.blockEdit}
-                onClick={e => {
-                  handleOpenEdit(e, '', 'Bloco', 'block');
-                  setTitle(blockSelected.label);
-                }}
-              >
-                <EditIcon />
-              </IconButton>
-            </span>
-          </Tooltip>
-        </div>
-
-        <div className="content">
-          <Select
-            className="basic-single"
-            classNamePrefix="select"
-            inputId="react-select-multiple"
-            placeholder="Selecione uma Disciplina"
-            options={modulesOptions}
-            value={moduleSelected}
-            onChange={handleChangeModule}
-            isDisabled={moduleLoading}
-          />
-          <Tooltip title="Criar Disciplina">
-            <span>
-              <IconButton
-                color="primary"
-                id="create-module"
-                disabled={disableButton.moduleCreate}
-                onClick={e => handleOpen(e, '', 'Disciplina', 'module')}
-              >
-                <AddIcon />
-              </IconButton>
-            </span>
-          </Tooltip>
-          <Tooltip title="Editar Disciplina">
-            <span>
-              <IconButton
-                id="edit-module"
-                disabled={disableButton.moduleEdit}
-                onClick={e => {
-                  handleOpenEdit(e, '', 'Disciplina', 'module');
-                  setTitle(moduleSelected.label);
-                }}
-              >
-                <EditIcon />
-              </IconButton>
-            </span>
-          </Tooltip>
         </div>
       </Container>
-      {!tableLoading && tableData && <Table data={tableData} />}
       <Modal
         open={modalOpen}
         handleClose={handleClose}

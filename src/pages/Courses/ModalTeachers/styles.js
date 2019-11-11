@@ -1,29 +1,13 @@
 import styled from 'styled-components';
-import { styled as materialStyle } from '@material-ui/styles';
-import Button from '@material-ui/core/Button';
 
 export const Container = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin: 20px 10px;
-  button {
-    margin: 0px 8px;
-    align-items: center;
-
-    img {
-      margin-right: 10px;
-      text-align: center;
-    }
-  }
+  display: ${props => (props.show ? 'flex' : 'none')};
 `;
 
-export const ModalContainer = styled.div`
-  position: absolute;
+export const Content = styled.div`
   align-self: center;
   width: 100%;
-  max-width: 700px;
+  max-width: 450px;
   background-color: #ffffff;
   border-radius: 4px;
   padding: 24px;
@@ -77,21 +61,3 @@ export const Wrapper = styled.div`
   display: flex;
   width: 100%;
 `;
-
-export const ButtonFolder = materialStyle(Button)({
-  color: '#2196f3',
-  borderColor: '#2196f3',
-  '&:hover': {
-    borderColor: '#2196f3',
-  },
-});
-
-export const ButtonCreate = materialStyle(Button)({
-  color: '#fff',
-  backgroundColor: '#2196f3',
-  borderColor: '#2196f3',
-  '&:hover': {
-    borderColor: '#2196f3',
-    backgroundColor: '#2199f9',
-  },
-});

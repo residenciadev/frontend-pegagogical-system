@@ -2,6 +2,17 @@ import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 
 export const Container = styled.div`
+  display: flex;
+  width: 100%;
+
+  .content-right {
+    width: 50%;
+    margin-left: 24px;
+    border-left: 1px solid #e0e0e0;
+  }
+`;
+
+export const ContentSelect = styled.div`
   max-width: 500px;
 
   .content {

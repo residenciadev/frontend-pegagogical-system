@@ -412,7 +412,6 @@ export default function Lessons() {
         return 'Uknown stepIndex';
     }
   }
-  console.log(profile);
   return (
     <div className={classes.root}>
       <Stepper activeStep={activeStep} alternativeLabel>

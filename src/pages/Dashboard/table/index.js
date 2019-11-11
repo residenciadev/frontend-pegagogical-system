@@ -312,11 +312,10 @@ const useStyles = makeStyles(theme => ({
 
 export default function EnhancedTable({ data: rows, loadData }) {
   const classes = useStyles();
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
+  const [order, setOrder] = React.useState('desc');
+  const [orderBy, setOrderBy] = React.useState('id');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const [open, setOpen] = useState(false);
@@ -374,10 +373,6 @@ export default function EnhancedTable({ data: rows, loadData }) {
   function handleChangeRowsPerPage(event) {
     setRowsPerPage(+event.target.value);
     setPage(0);
-  }
-
-  function handleChangeDense(event) {
-    setDense(event.target.checked);
   }
 
   const handleModalRemove = () => {
@@ -453,7 +448,7 @@ export default function EnhancedTable({ data: rows, loadData }) {
           <Table
             className={classes.table}
             aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
+            size="small"
           >
             <EnhancedTableHead
               classes={classes}
@@ -572,10 +567,6 @@ export default function EnhancedTable({ data: rows, loadData }) {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Paper>
-      <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Linhas pequenas"
-      />
     </div>
   );
 }
