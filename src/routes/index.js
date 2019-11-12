@@ -8,7 +8,6 @@ import ResetPassword from '../pages/ResetPassword';
 
 import Profile from '../pages/Profile';
 import Dashboard from '../pages/Dashboard';
-import Subpasta from '../pages/Subpasta';
 import Users from '../pages/Users';
 import Lessons from '../pages/Lessons';
 import EditLessons from '../pages/EditLessons';
@@ -25,7 +24,6 @@ export default function Routes() {
       <Route path="/courses" component={Courses} isPrivate />
       <Route path="/new-lessons" component={Lessons} isPrivate />
       <Route path="/edit-lessons/:id" component={EditLessons} isPrivate />
-      <Route path="/subpasta/:id/:title" component={Subpasta} isPrivate />
       <Route path="/profile" component={Profile} isPrivate />
       <Route path="/users" component={Users} isPrivate />
       <Route path="/" component={() => <h1>404</h1>} />

@@ -10,11 +10,14 @@ export const Container = styled.div`
     margin-left: 24px;
     border-left: 1px solid #e0e0e0;
   }
+  @media (max-width: 768px) {
+    flex-direction: column-reverse;
+  }
 `;
 
 export const ContentSelect = styled.div`
   max-width: 500px;
-
+  min-width: 500px;
   .content {
     display: flex;
     width: 100%;

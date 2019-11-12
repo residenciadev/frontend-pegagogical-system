@@ -237,28 +237,21 @@ export default function EnhancedTable({ data: rows, loadData }) {
             </TableBody>
           </Table>
         </div>
-        {/* <TablePagination
-          rowsPerPageOptions={[5, 10, 50]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          backIconButtonProps={{
-            'aria-label': 'previous page',
-          }}
-          nextIconButtonProps={{
-            'aria-label': 'next page',
-          }}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        /> */}
       </Paper>
     </div>
   );
 }
 
 EnhancedTable.propTypes = {
-  data: PropTypes.array.isRequired,
+  data: PropTypes.arrayOf(
+    PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.string,
+      PropTypes.object,
+      PropTypes.func,
+      PropTypes.array,
+    ])
+  ).isRequired,
   loadData: PropTypes.func,
 };
 

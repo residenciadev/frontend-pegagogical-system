@@ -13,7 +13,7 @@ import Modal from '../../components/Modal';
 import api from '../../services/api';
 import { Container, ContentSelect, MdButton } from './styles';
 import Table from './table';
-import ModalTeachers from './ModalTeachers';
+import TeachersList from './TeachersList';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -119,7 +119,7 @@ export default function Courses() {
   });
 
   const [teachers, setTeachers] = useState([]);
-  const [modalOpenTeacher, setModalOpenTeacher] = useState(false);
+  const [openTeacherList, setOpenTeacherList] = useState(false);
 
   const handleOpen = (e, id, name, type) => {
     setModalData({ id, name, type });
@@ -131,10 +131,10 @@ export default function Courses() {
   };
 
   const handleOpenTeacher = () => {
-    setModalOpenTeacher(true);
+    setOpenTeacherList(true);
   };
   const handleCloseTeacher = () => {
-    setModalOpenTeacher(false);
+    setOpenTeacherList(false);
   };
 
   const handleOpenEdit = (e, id, name, type) => {
@@ -189,12 +189,18 @@ export default function Courses() {
     setCourseSelected(value);
     setBlockSelected([]);
     setModuleSelected([]);
+    setTableData([]);
+    setTableLoading(true);
+    handleCloseTeacher();
     setDisableButton(prevState => {
       return {
         ...prevState,
         courseCreate: false,
         courseEdit: false,
         blockCreate: false,
+        moduleCreate: true,
+        blockEdit: true,
+        moduleEdit: true,
       };
     });
     loadBlock(value.id);
@@ -202,6 +208,9 @@ export default function Courses() {
   const handleChangeBlock = value => {
     setBlockSelected(value);
     setModuleSelected([]);
+    setTableData([]);
+    setTableLoading(true);
+    handleCloseTeacher();
     setDisableButton(prevState => {
       return {
         ...prevState,
@@ -209,6 +218,7 @@ export default function Courses() {
         blockCreate: false,
         blockEdit: false,
         moduleCreate: false,
+        moduleEdit: true,
       };
     });
     loadModules(value.id);
@@ -334,7 +344,6 @@ export default function Courses() {
       setCourseLoading(false);
     }
     load();
-    loadLessons(1);
   }, []);
 
   return (
@@ -478,10 +487,9 @@ export default function Courses() {
           </div>
           {!tableLoading && tableData && <Table data={tableData} />}
         </ContentSelect>
-        <div className="content-right" show={`${modalOpenTeacher}`}>
-          <ModalTeachers
-            open={modalOpenTeacher}
-            handleClose={handleCloseTeacher}
+        <div className="content-right" show={`${openTeacherList}`}>
+          <TeachersList
+            show={openTeacherList}
             teachers={teachers.filter(t => t.type === 'teacher')}
             moduleId={moduleSelected.id || 0}
           />
