@@ -231,7 +231,6 @@ export default function EditLessons() {
       videos
     );
     const selected = statusSelected.value;
-    console.log(selected);
     const dropbox = data
       .filter(element => element.id !== undefined)
       .map(element => element.id);
