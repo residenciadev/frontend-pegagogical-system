@@ -10,7 +10,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MoreIcon from '@material-ui/icons/MoreVert';
+import Badge from '@material-ui/core/Badge';
 import EmojiObjectsOutlined from '@material-ui/icons/EmojiObjectsOutlined';
+import NotificationsIcon from '@material-ui/icons/Notifications';
 import { Link } from 'react-router-dom';
 import storage from 'redux-persist/lib/storage';
 import { Avatar } from '@material-ui/core';
@@ -42,7 +44,7 @@ const useStyles = makeStyles(theme => ({
     alignSelf: 'center',
     marginLeft: '8px',
     cursor: 'pointer',
-    width: '100px',
+    // width: '100px',
   },
   search: {
     position: 'relative',
@@ -109,6 +111,7 @@ const useStyles = makeStyles(theme => ({
   link: {
     color: [theme.palette.type === 'dark' ? '#fff' : '#000'],
   },
+  MuiBadgeBadge: { width: '20px', height: '20px', padding: 0 },
 }));
 
 export default function PrimarySearchAppBar() {
@@ -163,14 +166,14 @@ export default function PrimarySearchAppBar() {
         <MenuItem onClick={handleMenuClose}>Meu Perfil</MenuItem>
       </Link>
       {profile.type === 'pedagogical' && (
-        <>
+        <div>
           <Link className={classes.link} to="/users">
             <MenuItem onClick={handleMenuClose}>Gerenciar Usuários</MenuItem>
           </Link>
           <Link className={classes.link} to="/courses">
             <MenuItem onClick={handleMenuClose}>Gerenciar Módulos</MenuItem>
           </Link>
-        </>
+        </div>
       )}
 
       <MenuItem onClick={handleLeave}>Sair</MenuItem>
@@ -224,6 +227,15 @@ export default function PrimarySearchAppBar() {
           </Typography>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
+            <IconButton aria-label="show 17 new notifications" color="inherit">
+              <Badge
+                badgeContent={17}
+                color="secondary"
+                className={classes.MuiBadgeBadge}
+              >
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
             <IconButton
               edge="end"
               aria-label="change Theme"
@@ -252,9 +264,7 @@ export default function PrimarySearchAppBar() {
               {profile.dropbox_id ? (
                 <Avatar src={correctUrl(profile.dropbox.url)} />
               ) : (
-                <Avatar>
-                  <AccountCircle />
-                </Avatar>
+                <AccountCircle />
               )}
             </IconButton>
           </div>
@@ -270,9 +280,7 @@ export default function PrimarySearchAppBar() {
               {profile.dropbox_id ? (
                 <Avatar src={correctUrl(profile.dropbox.url)} />
               ) : (
-                <Avatar>
-                  <AccountCircle />
-                </Avatar>
+                <AccountCircle />
               )}
             </IconButton>
             <Typography
