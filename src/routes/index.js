@@ -12,6 +12,7 @@ import Users from '../pages/Users';
 import Lessons from '../pages/Lessons';
 import EditLessons from '../pages/EditLessons';
 import Courses from '../pages/Courses';
+import Notification from '../pages/Notification';
 
 export default function Routes() {
   return (
@@ -26,6 +27,7 @@ export default function Routes() {
       <Route path="/edit-lessons/:id" component={EditLessons} isPrivate />
       <Route path="/profile" component={Profile} isPrivate />
       <Route path="/users" component={Users} isPrivate />
+      <Route path="/notifications" component={Notification} isPrivate />
       <Route path="/" component={() => <h1>404</h1>} />
     </Switch>
   );

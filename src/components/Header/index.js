@@ -111,6 +111,9 @@ const useStyles = makeStyles(theme => ({
   link: {
     color: [theme.palette.type === 'dark' ? '#fff' : '#000'],
   },
+  linkNotification: {
+    color: [theme.palette.type === 'dark' ? '#fff' : '#fff'],
+  },
   MuiBadgeBadge: { width: '20px', height: '20px', padding: 0 },
 }));
 
@@ -227,15 +230,20 @@ export default function PrimarySearchAppBar() {
           </Typography>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <IconButton aria-label="show 17 new notifications" color="inherit">
-              <Badge
-                badgeContent={17}
-                color="secondary"
-                className={classes.MuiBadgeBadge}
+            <Link to="/notifications" className={classes.linkNotification}>
+              <IconButton
+                aria-label="show 17 new notifications"
+                color="inherit"
               >
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
+                <Badge
+                  badgeContent={17}
+                  color="secondary"
+                  className={classes.MuiBadgeBadge}
+                >
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+            </Link>
             <IconButton
               edge="end"
               aria-label="change Theme"
