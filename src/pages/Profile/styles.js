@@ -1,7 +1,5 @@
 import styled from 'styled-components';
-import { styled as materialStyle } from '@material-ui/styles';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 
 export const Container = styled.div`
   max-width: 500px;
@@ -18,21 +16,21 @@ export const Container = styled.div`
       border: 0;
       height: 1px;
       margin-bottom: 10px;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.1);
     }
 
     input {
-      background: rgba(0, 0, 0, 0.8);
+      background: #ededed;
       border: 0;
       border-radius: 4px;
       height: 44px;
       padding: 0 16px;
-      color: #fff;
+      color: rgba(0, 0, 0, 0.8);
       margin: 0 0 10px;
       width: 100%;
 
       &::placeholder {
-        color: #fff;
+        color: rgba(0, 0, 0, 0.8);
       }
     }
   }

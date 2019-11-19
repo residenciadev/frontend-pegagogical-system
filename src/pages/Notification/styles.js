@@ -10,8 +10,12 @@ export const Container = styled.div`
   max-width: 800px;
 
   hr {
-    width: 100%;
+    border: 0;
+    height: 1px;
+    margin-bottom: 10px;
+    background: rgba(0, 0, 0, 0.1);
   }
+
   h1 {
     align-self: center;
     font-style: normal;
@@ -32,6 +36,9 @@ export const ListNotification = styled.ul`
   display: flex;
   flex-direction: column;
   width: 100%;
+  a {
+    color: rgba(0, 0, 0, 0.1);
+  }
   li {
     display: flex;
     padding: 16px 8px;
@@ -39,6 +46,7 @@ export const ListNotification = styled.ul`
     justify-content: space-between;
     cursor: pointer;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: #ededed;
     p {
       font-style: normal;
       font-weight: 400;
@@ -52,13 +60,13 @@ export const ListNotification = styled.ul`
       line-height: 24px;
     }
     :hover {
-      background-color: #fafafa;
+      background-color: #e0e0e0;
     }
   }
   .read {
-    background-color: #ededed;
+    background-color: #fff;
     :hover {
-      background-color: #e0e0e0;
+      background-color: #fafafa;
     }
   }
 `;

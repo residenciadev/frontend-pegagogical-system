@@ -198,19 +198,21 @@ export default function PrimarySearchAppBar() {
         <MenuItem onClick={handleProfileMenuOpen}>Meu Perfil</MenuItem>
       </Link>
       {profile.type === 'pedagogical' && (
-        <>
+        <div>
           <Link className={classes.link} to="/users">
             <MenuItem onClick={handleMenuClose}>Gerenciar Usuários</MenuItem>
           </Link>
           <Link className={classes.link} to="/courses">
             <MenuItem onClick={handleMenuClose}>Gerenciar Módulos</MenuItem>
           </Link>
-        </>
+        </div>
       )}
       <MenuItem onClick={handleLeave}>Sair</MenuItem>
     </Menu>
   );
-
+  // <Link className={classes.link} to="/courses">
+  //   <MenuItem onClick={handleMenuClose}>Gerenciar Módulos</MenuItem>
+  // </Link>;
   return (
     <div className={classes.grow}>
       <AppBar position="static" color="primary" className={classes.app}>
@@ -277,6 +279,20 @@ export default function PrimarySearchAppBar() {
             </IconButton>
           </div>
           <div className={classes.sectionMobile} key={profile.id}>
+            <Link to="/notifications" className={classes.linkNotification}>
+              <IconButton
+                aria-label="show 17 new notifications"
+                color="inherit"
+              >
+                <Badge
+                  badgeContent={17}
+                  color="secondary"
+                  className={classes.MuiBadgeBadge}
+                >
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+            </Link>
             <IconButton
               edge="end"
               aria-label="account of current user"

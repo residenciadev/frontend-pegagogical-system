@@ -7,7 +7,7 @@ import {
   updateProfileFailure,
 } from './actions';
 
-export function* getUser({ payload }) {
+export function* getUser() {
   const response = yield call(api.get, 'member');
 
   yield put(getUserSuccess(response.data));
