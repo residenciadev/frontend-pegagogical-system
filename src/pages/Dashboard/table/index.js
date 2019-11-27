@@ -316,7 +316,7 @@ export default function EnhancedTable({ data: rows, loadData }) {
   const [orderBy, setOrderBy] = React.useState('id');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const [open, setOpen] = useState(false);
   const [modalName, setModalName] = useState('');
@@ -544,15 +544,15 @@ export default function EnhancedTable({ data: rows, loadData }) {
                     );
                   })}
               {emptyRows > 0 && (
-                <TableRow style={{ height: 49 * emptyRows }}>
-                  <TableCell colSpan={6} />
+                <TableRow style={{ height: 38 * emptyRows }}>
+                  <TableCell colSpan={10} />
                 </TableRow>
               )}
             </TableBody>
           </Table>
         </div>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 50]}
+          rowsPerPageOptions={[10, 20, 50]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}

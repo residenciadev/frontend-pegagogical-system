@@ -217,6 +217,7 @@ export default function EditLessons() {
       questions_obs,
       answers_obs,
     } = values;
+
     const {
       slide,
       materialComplementary,
@@ -224,18 +225,20 @@ export default function EditLessons() {
       backgroundImages,
       videos,
     } = uploadedFiles;
+
     const data = slide.concat(
       materialComplementary,
       images,
       backgroundImages,
       videos
     );
+
     const selected = statusSelected.value;
     const dropbox = data
       .filter(element => element.id !== undefined)
       .map(element => element.id);
     try {
-      const response = await api.put(
+      await api.put(
         `lessons/${lessonsId}/content/${contentId}?status=${selected ||
           statusOptions[0].value}`,
         {
@@ -331,9 +334,6 @@ export default function EditLessons() {
     }
     loadData(lessonsId);
   }, [match, profile]);
-  console.log(dataContent);
-  // console.log('up', dataContent);
-  // console.log('up', answers);
 
   return (
     <>

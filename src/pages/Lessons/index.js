@@ -6,7 +6,6 @@ import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
 import { uniqueId } from 'lodash';
 import filesize from 'filesize';
 import { toast } from 'react-toastify';
@@ -100,10 +99,10 @@ export default function Lessons() {
   const [message, setMessage] = useState('');
 
   const steps = getSteps();
-  const [state, setState] = useState({
-    dropbox: true,
-    linkexterno: false,
-  });
+  // const [state, setState] = useState({
+  //   dropbox: true,
+  //   linkexterno: false,
+  // });
 
   const [uploadedFiles, setUploadedFiles] = useState({
     slide: [],
@@ -116,12 +115,10 @@ export default function Lessons() {
   const [questions, setQuestions] = useState();
   const [answers, setAnswers] = useState();
 
-  // const [loading, setLoading] = useState(true);
   const [isDisabled, setIsDisabled] = useState(true);
 
   useEffect(() => {
     dispatch(getUserRequest());
-    // setLoading(false);
   }, [dispatch]);
 
   const fixedModules = useCallback(
@@ -220,7 +217,6 @@ export default function Lessons() {
           materialComplementary.length >= 1 &&
           dropbox.length >= 10 &&
           backgroundImages.length >= 1 &&
-          videos.length >= 1 &&
           !!questions &&
           !!answers
         ) {
@@ -229,7 +225,6 @@ export default function Lessons() {
             status,
             title,
           });
-          console.log(answers);
           await api.post(`lessons/${responseLesson.data.id}/content`, {
             theme,
             skills,

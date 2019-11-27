@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { fade, makeStyles } from '@material-ui/core/styles';
@@ -20,6 +20,7 @@ import useReactRouter from 'use-react-router';
 import correctUrl from '../../utils/correctUrl';
 
 import { changeThemeRequest } from '../../store/modules/theme/actions';
+import { getNotificationRequest } from '../../store/modules/notification/actions';
 
 const useStyles = makeStyles(theme => ({
   grow: {
@@ -88,6 +89,7 @@ const useStyles = makeStyles(theme => ({
     display: 'none',
     [theme.breakpoints.up('md')]: {
       display: 'flex',
+      alignItems: 'center',
     },
   },
   sectionMobile: {
@@ -95,6 +97,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space between',
     [theme.breakpoints.up('md')]: {
       display: 'none',
+      alignItems: 'center',
     },
   },
   app: {
@@ -124,9 +127,14 @@ export default function PrimarySearchAppBar() {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const { history } = useReactRouter();
   const profile = useSelector(state => state.user.profile);
+  const notification = useSelector(state => state.notification.data);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  useEffect(() => {
+    dispatch(getNotificationRequest(1, 50));
+  }, [dispatch]);
 
   function handleChangeTheme(event) {
     dispatch(changeThemeRequest());
@@ -149,10 +157,21 @@ export default function PrimarySearchAppBar() {
   function handleMobileMenuOpen(event) {
     setMobileMoreAnchorEl(event.currentTarget);
   }
+
   function handleLeave() {
     storage.removeItem('persist:pedagogical');
     history.go('/signIn');
   }
+
+  const getSumNotification = useMemo(() => {
+    let sumNotification = 0;
+    if (notification.data) {
+      sumNotification = notification.data.filter(
+        element => element.read === false
+      ).length;
+    }
+    return sumNotification;
+  }, [notification]);
 
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
@@ -194,6 +213,9 @@ export default function PrimarySearchAppBar() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
+      <Link className={classes.link} to="/dashboard">
+        <MenuItem onClick={handleProfileMenuOpen}>Home</MenuItem>
+      </Link>
       <Link className={classes.link} to="/profile">
         <MenuItem onClick={handleProfileMenuOpen}>Meu Perfil</MenuItem>
       </Link>
@@ -210,9 +232,7 @@ export default function PrimarySearchAppBar() {
       <MenuItem onClick={handleLeave}>Sair</MenuItem>
     </Menu>
   );
-  // <Link className={classes.link} to="/courses">
-  //   <MenuItem onClick={handleMenuClose}>Gerenciar Módulos</MenuItem>
-  // </Link>;
+
   return (
     <div className={classes.grow}>
       <AppBar position="static" color="primary" className={classes.app}>
@@ -234,13 +254,14 @@ export default function PrimarySearchAppBar() {
           <div className={classes.sectionDesktop}>
             <Link to="/notifications" className={classes.linkNotification}>
               <IconButton
-                aria-label="show 17 new notifications"
+                aria-label={`show ${getSumNotification} new notifications`}
                 color="inherit"
               >
                 <Badge
-                  badgeContent={17}
+                  badgeContent={getSumNotification}
                   color="secondary"
                   className={classes.MuiBadgeBadge}
+                  showZero={false}
                 >
                   <NotificationsIcon />
                 </Badge>
@@ -285,9 +306,10 @@ export default function PrimarySearchAppBar() {
                 color="inherit"
               >
                 <Badge
-                  badgeContent={17}
+                  badgeContent={getSumNotification}
                   color="secondary"
                   className={classes.MuiBadgeBadge}
+                  showZero={false}
                 >
                   <NotificationsIcon />
                 </Badge>
@@ -298,7 +320,7 @@ export default function PrimarySearchAppBar() {
               aria-label="account of current user"
               aria-controls={menuId}
               aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
+              onClick={handleMobileMenuOpen}
               color="inherit"
             >
               {profile.dropbox_id ? (
@@ -311,7 +333,7 @@ export default function PrimarySearchAppBar() {
               className={classes.titleUser}
               variant="h6"
               noWrap
-              onClick={handleProfileMenuOpen}
+              onClick={handleMobileMenuOpen}
             >
               {profile.name}
             </Typography>

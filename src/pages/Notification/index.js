@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TablePagination from '@material-ui/core/TablePagination';
-import useReactRouter from 'use-react-router';
 import { Link } from 'react-router-dom';
 import api from '../../services/api';
 import { Container, ListNotification } from './styles';
@@ -10,7 +9,6 @@ import formatDate from '../../utils/formatDate';
 
 export default function Notification() {
   const dispatch = useDispatch();
-  const { history } = useReactRouter();
   const data = useSelector(state => state.notification.data);
   const loading = useSelector(state => state.notification.loading);
   const [page, setPage] = useState(0);

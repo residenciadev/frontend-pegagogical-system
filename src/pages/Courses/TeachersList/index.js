@@ -118,7 +118,6 @@ export default function TeachersList({ show, teachers, moduleId }) {
     );
     setDataTeachers(teachers);
   }, [moduleId, teachers]);
-  console.log(teachers);
   return (
     <Container show={show}>
       <Content className={classes.paper}>

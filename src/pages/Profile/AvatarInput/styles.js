@@ -12,9 +12,9 @@ export const Container = styled.div`
       opacity: 0.7;
     }
     .avatarImg {
-      width: 70px;
-      height: 70px;
-      background-color: '#fafafa'
+      width: 150px;
+      height: 150px;
+      background-color: '#fafafa';
 
       &:hover {
         opacity: 0.5;

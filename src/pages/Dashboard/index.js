@@ -20,8 +20,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <Container>
-        <h1>Aulas</h1>
+      <Container isTeacher={profile.type === 'teacher'}>
         <div>
           {profile.type === 'teacher' && (
             <Link to="/new-lessons">

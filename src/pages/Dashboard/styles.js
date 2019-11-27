@@ -3,11 +3,11 @@ import Button from '@material-ui/core/Button';
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  display: flex;
+  display: ${props => (props.isTeacher ? 'flex' : 'none')};
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  margin: 20px 10px;
+  /* margin: 20px 10px; */
   button {
     margin: 0px 8px;
     svg {
