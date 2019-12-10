@@ -14,13 +14,12 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import { NavLink } from 'react-router-dom';
+import useReactRouter from 'use-react-router';
 
 import Modal from '@material-ui/core/Modal';
 import Avatar from '@material-ui/core/Avatar';
@@ -213,7 +212,7 @@ const EnhancedTableToolbar = props => {
       <div className={classes.title}>
         {numSelected > 0 ? (
           <Typography color="inherit" variant="subtitle1">
-            {numSelected} selected
+            {numSelected} Selecionado
           </Typography>
         ) : (
           <div className={classes.align}>
@@ -312,11 +311,12 @@ const useStyles = makeStyles(theme => ({
 
 export default function EnhancedTable({ data: rows, loadData }) {
   const classes = useStyles();
-  const [order, setOrder] = React.useState('desc');
-  const [orderBy, setOrderBy] = React.useState('id');
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const { history } = useReactRouter();
+  const [order, setOrder] = useState('desc');
+  const [orderBy, setOrderBy] = useState('id');
+  const [selected, setSelected] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [open, setOpen] = useState(false);
   const [modalName, setModalName] = useState('');
@@ -382,13 +382,13 @@ export default function EnhancedTable({ data: rows, loadData }) {
   async function handleDelete(e) {
     e.preventDefault();
     try {
-      await api.delete(`//${selected[0]}`);
-      toast.success('Usuário removido com sucesso!');
+      await api.delete(`/lessons/${selected[0]}`);
+      toast.success('Aula removida com sucesso!');
       handleModalRemove();
       setSelected([]);
-      loadData();
+      history.go('/');
     } catch (error) {
-      toast.error('Não foi possivel remover o usuário!');
+      toast.error('Não foi possivel remover a Aula!');
     }
   }
 

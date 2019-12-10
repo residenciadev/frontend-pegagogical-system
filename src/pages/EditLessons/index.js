@@ -23,6 +23,10 @@ const useStyles = makeStyles(theme => ({
     height: '56px',
     width: '100%',
   },
+  textFieldObs: {
+    width: '100%',
+    backgroundColor: '#EBF3FF',
+  },
   content: {
     display: 'flex',
     justifyContent: 'flex-end',
@@ -262,7 +266,7 @@ export default function EditLessons() {
           dropbox,
         }
       );
-
+      history.push('/');
       toast.success(
         'Aula editada com sucesso, aguarde a aprovação do pedagógico'
       );
@@ -451,7 +455,7 @@ export default function EditLessons() {
                     rowsMax="4"
                     rows="4"
                     placeholder="O que o aluno irá aprender com a aula?"
-                    className={classes.textField}
+                    className={classes.textFieldObs}
                     value={values.skills_obs}
                     onChange={handleChange('skills_obs')}
                     style={{ zIndex: 0 }}
@@ -506,11 +510,10 @@ export default function EditLessons() {
                     multiline
                     rowsMax="4"
                     rows="4"
-                    className={classes.textField}
+                    className={classes.textFieldObs}
                     value={values.material_obs}
                     onChange={handleChange('material_obs')}
                     style={{ zIndex: 0 }}
-                    required
                     disabled={isNotPedagogical}
                   />
                 </div>
@@ -561,11 +564,10 @@ export default function EditLessons() {
                     multiline
                     rowsMax="4"
                     rows="4"
-                    className={classes.textField}
+                    className={classes.textFieldObs}
                     value={values.material_complementary_obs}
                     onChange={handleChange('material_complementary_obs')}
                     style={{ zIndex: 0 }}
-                    required
                     disabled={isNotPedagogical}
                   />
                 </div>
@@ -617,11 +619,10 @@ export default function EditLessons() {
                     multiline
                     rowsMax="4"
                     rows="4"
-                    className={classes.textField}
+                    className={classes.textFieldObs}
                     value={values.images_obs}
                     onChange={handleChange('images_obs')}
                     style={{ zIndex: 0 }}
-                    required
                     disabled={isNotPedagogical}
                   />
                 </div>
@@ -676,11 +677,10 @@ export default function EditLessons() {
                     multiline
                     rowsMax="4"
                     rows="4"
-                    className={classes.textField}
+                    className={classes.textFieldObs}
                     value={values.images_background_obs}
                     onChange={handleChange('images_background_obs')}
                     style={{ zIndex: 0 }}
-                    required
                     disabled={isNotPedagogical}
                   />
                 </div>
@@ -762,11 +762,10 @@ export default function EditLessons() {
                     multiline
                     rowsMax="4"
                     rows="4"
-                    className={classes.textField}
+                    className={classes.textFieldObs}
                     value={values.video_obs}
                     onChange={handleChange('video_obs')}
                     style={{ zIndex: 0 }}
-                    required
                     disabled={isNotPedagogical}
                   />
                 </div>
@@ -793,11 +792,10 @@ export default function EditLessons() {
                     multiline
                     rowsMax="4"
                     rows="4"
-                    className={classes.textField}
+                    className={classes.textFieldObs}
                     value={values.questions_obs}
                     onChange={handleChange('questions_obs')}
                     style={{ zIndex: 0, marginTop: '33px' }}
-                    required
                     disabled={isNotPedagogical}
                   />
                 </div>
@@ -824,11 +822,10 @@ export default function EditLessons() {
                     multiline
                     rowsMax="4"
                     rows="4"
-                    className={classes.textField}
+                    className={classes.textFieldObs}
                     value={values.answers_obs}
                     onChange={handleChange('answers_obs')}
                     style={{ zIndex: 0, marginTop: '33px' }}
-                    required
                     disabled={isNotPedagogical}
                   />
                 </div>

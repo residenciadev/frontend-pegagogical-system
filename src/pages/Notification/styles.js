@@ -27,7 +27,6 @@ export const Container = styled.div`
     align-items: center;
     letter-spacing: 0.15px;
     margin-top: 32px;
-
     margin-bottom: 24px;
   }
 `;
@@ -41,24 +40,27 @@ export const ListNotification = styled.ul`
   }
   li {
     display: flex;
-    padding: 16px 8px;
+    padding: 16px 16px;
     width: 100%;
     justify-content: space-between;
     cursor: pointer;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    background-color: #ededed;
+    background-color: #ebf3ff;
     p {
       font-style: normal;
       font-weight: 400;
       font-size: 16px;
       line-height: 24px;
+      color: #000;
     }
     small {
       font-style: normal;
       font-weight: 400;
       font-size: 12px;
       line-height: 24px;
+      color: #000;
     }
+
     :hover {
       background-color: #e0e0e0;
     }
@@ -68,5 +70,8 @@ export const ListNotification = styled.ul`
     :hover {
       background-color: #fafafa;
     }
+  }
+  a:nth-child(1) {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
   }
 `;

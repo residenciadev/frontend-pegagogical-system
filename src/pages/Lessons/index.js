@@ -224,8 +224,6 @@ export default function Lessons() {
             module_id,
             status,
             title,
-          });
-          await api.post(`lessons/${responseLesson.data.id}/content`, {
             theme,
             skills,
             slide: true,
@@ -239,6 +237,7 @@ export default function Lessons() {
             questions,
             answers,
           });
+          // await api.post(`lessons/${responseLesson.data.id}/content`, {});
 
           toast.success(
             'Aula criada com sucesso, aguarde a aprovação do pedagógico'
