@@ -48,7 +48,6 @@ export const MdButton = styled(Button)`
     background: '#063057';
     border-radius: 4px;
     span {
-      font-family: Source Sans Pro;
       font-style: normal;
       font-weight: 600;
       font-size: 14px;
