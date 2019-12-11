@@ -112,6 +112,7 @@ export const Wrapper = styled.div`
 `;
 
 export const ButtonFolder = materialStyle(Button)({
+  height: '38px',
   color: '#2196f3',
   borderColor: '#2196f3',
   '&:hover': {
@@ -120,6 +121,7 @@ export const ButtonFolder = materialStyle(Button)({
 });
 
 export const ButtonCreate = materialStyle(Button)({
+  height: '38px',
   color: '#fff',
   backgroundColor: '#2196f3',
   borderColor: '#2196f3',

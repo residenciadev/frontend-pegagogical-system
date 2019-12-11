@@ -136,10 +136,10 @@ export default function PrimarySearchAppBar() {
     dispatch(getNotificationRequest(1, 50));
   }, [dispatch]);
 
-  function handleChangeTheme(event) {
-    dispatch(changeThemeRequest());
-    history.go('/');
-  }
+  // function handleChangeTheme(event) {
+  //   dispatch(changeThemeRequest());
+  //   history.go('/');
+  // }
 
   function handleProfileMenuOpen(event) {
     setAnchorEl(event.currentTarget);
@@ -267,14 +267,14 @@ export default function PrimarySearchAppBar() {
                 </Badge>
               </IconButton>
             </Link>
-            <IconButton
+            {/* <IconButton
               edge="end"
               aria-label="change Theme"
               onClick={e => handleChangeTheme(e)}
               color="inherit"
             >
               <EmojiObjectsOutlined />
-            </IconButton>
+            </IconButton> */}
 
             <Typography
               className={classes.titleUser}

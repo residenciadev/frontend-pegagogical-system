@@ -42,6 +42,7 @@ export const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(1),
     background: theme.palette.primary,
     color: '#FFF',
+    height: '38px',
   },
   input: {
     display: 'none',
