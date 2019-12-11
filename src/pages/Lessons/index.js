@@ -20,20 +20,10 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
     marginTop: theme.spacing(3),
-    background: [
-      theme.palette.type === 'dark'
-        ? theme.palette.paper.dark
-        : theme.palette.paper.light,
-    ],
   },
   paper: {
     width: '100%',
     marginBottom: theme.spacing(2),
-    background: [
-      theme.palette.type === 'dark'
-        ? theme.palette.paper.dark
-        : theme.palette.paper.light,
-    ],
   },
 
   backButton: {
@@ -52,7 +42,7 @@ const useStyles = makeStyles(theme => ({
   alert: {
     marginRight: theme.spacing(2),
     marginLeft: theme.spacing(2),
-    color: theme.palette.secondary.main,
+    color: '#f50057',
   },
 
   content: {

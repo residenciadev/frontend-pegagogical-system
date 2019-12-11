@@ -11,7 +11,6 @@ import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import Badge from '@material-ui/core/Badge';
-import EmojiObjectsOutlined from '@material-ui/icons/EmojiObjectsOutlined';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import { Link } from 'react-router-dom';
 import storage from 'redux-persist/lib/storage';
@@ -19,7 +18,6 @@ import { Avatar } from '@material-ui/core';
 import useReactRouter from 'use-react-router';
 import correctUrl from '../../utils/correctUrl';
 
-import { changeThemeRequest } from '../../store/modules/theme/actions';
 import { getNotificationRequest } from '../../store/modules/notification/actions';
 
 const useStyles = makeStyles(theme => ({
@@ -102,20 +100,16 @@ const useStyles = makeStyles(theme => ({
   },
   app: {
     boxShadow: 'none',
-    background: [
-      theme.palette.type === 'dark'
-        ? theme.palette.primary.dark
-        : theme.palette.primary.light,
-    ],
+    background: '#212c6f',
   },
   contentMobileProfile: {
     display: 'flex',
   },
   link: {
-    color: [theme.palette.type === 'dark' ? '#fff' : '#000'],
+    color: '#000',
   },
   linkNotification: {
-    color: [theme.palette.type === 'dark' ? '#fff' : '#fff'],
+    color: '#fff',
   },
   MuiBadgeBadge: { width: '20px', height: '20px', padding: 0 },
 }));
@@ -135,11 +129,6 @@ export default function PrimarySearchAppBar() {
   useEffect(() => {
     dispatch(getNotificationRequest(1, 50));
   }, [dispatch]);
-
-  // function handleChangeTheme(event) {
-  //   dispatch(changeThemeRequest());
-  //   history.go('/');
-  // }
 
   function handleProfileMenuOpen(event) {
     setAnchorEl(event.currentTarget);
@@ -267,14 +256,6 @@ export default function PrimarySearchAppBar() {
                 </Badge>
               </IconButton>
             </Link>
-            {/* <IconButton
-              edge="end"
-              aria-label="change Theme"
-              onClick={e => handleChangeTheme(e)}
-              color="inherit"
-            >
-              <EmojiObjectsOutlined />
-            </IconButton> */}
 
             <Typography
               className={classes.titleUser}

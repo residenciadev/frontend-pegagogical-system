@@ -5,12 +5,10 @@ import './config/reactotronConfig';
 import 'react-quill/dist/quill.snow.css';
 import { Router } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import { MuiThemeProvider } from '@material-ui/core';
 import history from './services/history';
 import Routes from './routes';
 import GlobalStyle from './styles/global';
 import { store, persistor } from './store';
-import theme from './styles/theme';
 
 function App() {
   const { loading } = store.getState().auth;
@@ -19,11 +17,9 @@ function App() {
     <Provider store={store}>
       <PersistGate loading={loading} persistor={persistor}>
         <Router history={history}>
-          <MuiThemeProvider theme={theme}>
-            <GlobalStyle />
-            <Routes />
-            <ToastContainer autoClose={3000} />
-          </MuiThemeProvider>
+          <GlobalStyle />
+          <Routes />
+          <ToastContainer autoClose={3000} />
         </Router>
       </PersistGate>
     </Provider>

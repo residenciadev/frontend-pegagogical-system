@@ -45,9 +45,7 @@ const useStyles = makeStyles(theme => ({
     opacity: 0.6,
   },
   color: {
-    color: [
-      theme.palette.type === 'dark' ? '#FFF' : theme.palette.background.dark,
-    ],
+    color: '#1f2224',
   },
 }));
 

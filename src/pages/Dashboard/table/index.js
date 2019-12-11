@@ -252,20 +252,10 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
     marginTop: theme.spacing(3),
-    background: [
-      theme.palette.type === 'dark'
-        ? theme.palette.paper.dark
-        : theme.palette.paper,
-    ],
   },
   paper: {
     width: '100%',
     marginBottom: theme.spacing(2),
-    background: [
-      theme.palette.type === 'dark'
-        ? theme.palette.paper.dark
-        : theme.palette.paper,
-    ],
   },
   table: {
     minWidth: 750,
@@ -286,20 +276,20 @@ const useStyles = makeStyles(theme => ({
   },
 
   yellow: {
-    background: theme.palette.alert.light,
+    background: '#ffc107',
     color: '#fff',
   },
   secodary: {
-    background: theme.palette.alert.red,
+    background: '#f44336',
     color: '#fff',
   },
   primary: {
-    background: theme.palette.alert.blue,
+    background: '#03a9f4',
     color: '#fff',
   },
   green: {
-    background: theme.palette.alert.success,
-    color: theme.palette.light,
+    background: '#43A047',
+    color: '#fff',
   },
   label: {
     maxWidth: '100px',

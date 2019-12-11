@@ -27,11 +27,6 @@ const useModalStyles = makeStyles(theme => ({
   paper: {
     width: '100%',
     marginBottom: theme.spacing(2),
-    background: [
-      theme.palette.type === 'dark'
-        ? theme.palette.paper.dark
-        : theme.palette.paper.light,
-    ],
   },
   select: {
     width: '100%',

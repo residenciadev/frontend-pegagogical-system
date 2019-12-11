@@ -46,22 +46,12 @@ const useModalStyles = makeStyles(theme => ({
   paper: {
     width: '100%',
     marginBottom: theme.spacing(2),
-    background: [
-      theme.palette.type === 'dark'
-        ? theme.palette.paper.dark
-        : theme.palette.paper.light,
-    ],
   },
   select: {
     width: '100%',
     marginTop: '10px',
     marginBottom: '10px',
     color: '#000',
-    background: [
-      theme.palette.type === 'dark'
-        ? theme.palette.paper.dark
-        : theme.palette.paper.light,
-    ],
   },
   formControlWrapper: {
     display: 'flex',
