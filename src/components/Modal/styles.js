@@ -63,7 +63,6 @@ export const MdModal = styled(Modal)`
       border-radius: 4px;
       width: 289px;
       height: 38px;
-      font-family: Source Sans Pro;
       font-style: normal;
       font-weight: normal;
       font-size: 14px;
@@ -73,7 +72,6 @@ export const MdModal = styled(Modal)`
       margin: 0px 16px;
 
       ::placeholder {
-        font-family: Source Sans Pro;
         font-style: normal;
         font-weight: normal;
         font-size: 14px;
