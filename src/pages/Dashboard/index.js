@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import Button from '@material-ui/core/Button';
 import api from '../../services/api';
 import Table from './table';
 
-import { Container, Wrapper, ButtonCreate } from './styles';
+import { Container, Wrapper } from './styles';
 
 export default function Dashboard() {
   const [data, setData] = useState([]);
@@ -24,13 +25,14 @@ export default function Dashboard() {
         <div>
           {profile.type === 'teacher' && (
             <Link to="/new-lessons">
-              <ButtonCreate
+              <Button
                 aria-label="add"
                 variant="contained"
+                color="primary"
                 onClick={() => {}}
               >
                 Nova Aula
-              </ButtonCreate>
+              </Button>
             </Link>
           )}
         </div>

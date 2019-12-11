@@ -1,5 +1,3 @@
-import { styled as materialStyle } from '@material-ui/styles';
-import Button from '@material-ui/core/Button';
 import styled from 'styled-components';
 
 export const Container = styled.div`
@@ -110,23 +108,3 @@ export const Wrapper = styled.div`
     }
   } */ 
 `;
-
-export const ButtonFolder = materialStyle(Button)({
-  height: '38px',
-  color: '#2196f3',
-  borderColor: '#2196f3',
-  '&:hover': {
-    borderColor: '#2196f3',
-  },
-});
-
-export const ButtonCreate = materialStyle(Button)({
-  height: '38px',
-  color: '#fff',
-  backgroundColor: '#2196f3',
-  borderColor: '#2196f3',
-  '&:hover': {
-    borderColor: '#2196f3',
-    backgroundColor: '#2199f9',
-  },
-});
