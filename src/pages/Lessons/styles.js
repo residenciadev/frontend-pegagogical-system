@@ -27,10 +27,12 @@ export const Container = styled.div`
     margin-top: 16px;
     opacity: 0.6;
   }
-
-  .box p:nth-child(3) {
+  .bold {
     font-weight: 700;
   }
+  /* .box p:nth-child(3) {
+    font-weight: 700;
+  } */
 
   .center-column {
     input {

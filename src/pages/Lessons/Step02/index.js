@@ -38,7 +38,7 @@ export default function Step02({
           <div className="left-column box">
             <h2>3. Material Didático Digital*</h2>
             <p>Slides</p>
-            <p>Arquivo em pptx</p>
+            <p className="bold">Arquivo em pptx</p>
           </div>
           <div className="center-column box">
             {!!uploadedFiles.slide.length < 5 && state.dropbox && (
@@ -93,7 +93,7 @@ export default function Step02({
           <div className="left-column box">
             <h2>5. Imagens*</h2>
             <p>Adicione as imagens que serão utilizadas em sua aula</p>
-            <p>Imagens(mínimo de 10) e GIFs</p>
+            <p className="bold">Imagens(mínimo de 10) e/ou GIFs</p>
           </div>
           <div className="center-column box">
             {!!uploadedFiles.images.length < 10 && state.dropbox && (
@@ -116,8 +116,8 @@ export default function Step02({
         <li className="item">
           <div className="left-column box">
             <h2>6. Planos de Fundo*</h2>
-            <p>Adicione as imagens que serão utilizadas no fundo da</p>
-            <p>2 Imagens</p>
+            <p>Adicione as imagens que serão utilizadas como plano de fundo</p>
+            <p className="bold">2 Imagens</p>
           </div>
           <div className="center-column box">
             {!!uploadedFiles.backgroundImages.length < 10 && state.dropbox && (
@@ -144,7 +144,7 @@ export default function Step02({
               Adicione os vídeos que serão utilizados em sua aula Cole os links
             </p>
             <p>no campo de texto ao lado ou envie arquivos de vídeo abaixo</p>
-            <p>Links e/ou arquivos de vídeo</p>
+            <p className="bold">Links e/ou arquivos de vídeo</p>
           </div>
           <div className="center-column box">
             <TextField

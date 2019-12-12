@@ -148,20 +148,20 @@ const useStyles = makeStyles(theme => ({
   },
 
   yellow: {
-    background: theme.palette.alert.light,
+    background: '#ffc107',
     color: '#fff',
   },
   secodary: {
-    background: theme.palette.alert.red,
+    background: '#f44336',
     color: '#fff',
   },
   primary: {
-    background: theme.palette.alert.blue,
+    background: '#03a9f4',
     color: '#fff',
   },
   green: {
-    background: theme.palette.alert.success,
-    color: theme.palette.light,
+    background: '#43A047',
+    color: '#000',
   },
   label: {
     maxWidth: '100px',

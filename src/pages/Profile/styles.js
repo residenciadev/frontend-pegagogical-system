@@ -15,12 +15,23 @@ export const Container = styled.div`
     hr {
       border: 0;
       height: 1px;
-      margin-bottom: 10px;
       background: rgba(0, 0, 0, 0.1);
+    }
+    h1,
+    h2 {
+      margin: 16px 0;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 24px;
+      line-height: 24px;
+
+      display: flex;
+      align-items: center;
+      letter-spacing: 0.15px;
     }
 
     input {
-      background: #ededed;
+      background: #f8f8f8;
       border: 0;
       border-radius: 4px;
       height: 44px;

@@ -74,7 +74,6 @@ function TextMaskCustom(props) {
         '(',
         /[0-9]/,
         /\d/,
-        /\d/,
         ')',
         '-',
         /\d/,

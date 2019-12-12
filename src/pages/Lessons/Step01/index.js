@@ -10,6 +10,9 @@ const useStyles = makeStyles(theme => ({
     height: '56px',
     width: '100%',
   },
+  selectModule: {
+    marginBottom: '16px',
+  },
 }));
 
 export default function Step01({
@@ -50,6 +53,7 @@ export default function Step01({
                 value={modulesSelected}
                 onChange={handleSelectModule}
                 required
+                className={classes.selectModule}
               />
               {modulesSelected && (
                 <span>
@@ -84,7 +88,7 @@ export default function Step01({
             <div className="left-column box">
               <h2>1. Tema*</h2>
               <p>Indique o título que contenha o tema principal da aula</p>
-              <p>conteúdo escrito (1 linha)</p>
+              <p className="bold">Conteúdo escrito (1 linha)</p>
             </div>
             <div className="center-column box">
               <TextField
@@ -111,7 +115,7 @@ export default function Step01({
               <h2>2. Competências*</h2>
               <p>O que o aluno irá aprender com a aula?</p>
               <p>Quais os conhecimentos que serão adquiridos?</p>
-              <p>Conteúdo escrito (Mínimo de 3 linhas)</p>
+              <p className="bold">Conteúdo escrito (Mínimo de 3 linhas)</p>
             </div>
             <div className="center-column box">
               <TextField
