@@ -510,6 +510,7 @@ export default function Courses() {
             value={title}
             onChange={e => setTitle(e.target.value)}
           />
+
           <hr />
           <div className="content-btn">
             <MdButton variant="contained" color="primary" type="submit">
