@@ -205,7 +205,7 @@ export default function Lessons() {
         if (
           slide.length >= 1 &&
           materialComplementary.length >= 1 &&
-          dropbox.length >= 10 &&
+          dropbox.length >= 5 &&
           backgroundImages.length >= 1 &&
           !!questions &&
           !!answers
@@ -227,7 +227,6 @@ export default function Lessons() {
             questions,
             answers,
           });
-          // await api.post(`lessons/${responseLesson.data.id}/content`, {});
 
           toast.success(
             'Aula criada com sucesso, aguarde a aprovação do pedagógico'
@@ -236,7 +235,7 @@ export default function Lessons() {
           history.push('/');
         } else {
           setMessage(
-            'Você precisa preencher todos os campos !! Lembrando Imagens são no mínimo 10'
+            'Você precisa preencher todos os campos !! Lembrando Imagens são no mínimo 5'
           );
 
           setTimeout(() => {
@@ -396,6 +395,58 @@ export default function Lessons() {
         return 'Uknown stepIndex';
     }
   }
+
+  async function handleSaveDraft(event) {
+    event.preventDefault();
+    try {
+      const module_id = modulesSelected.id;
+      const status = 'draft';
+      const title = lessonSelected.value;
+      const { theme, skills, links } = values;
+      const {
+        slide,
+        materialComplementary,
+        images,
+        backgroundImages,
+        videos,
+      } = uploadedFiles;
+      const data = slide.concat(
+        materialComplementary,
+        images,
+        backgroundImages,
+        videos
+      );
+
+      const dropbox = data
+        .filter(element => element.id !== undefined)
+        .map(element => element.id);
+
+      const responseLesson = await api.post('lessons', {
+        module_id,
+        status,
+        title,
+        theme,
+        skills,
+        slide: true,
+        material: true,
+        material_complementary: true,
+        images: true,
+        images_background: true,
+        video: true,
+        links,
+        dropbox,
+        questions,
+        answers,
+      });
+
+      toast.success('Aula criada com sucesso, aguarde e salva como rascunho');
+
+      history.push('/');
+    } catch (error) {
+      toast.error('Não foi possível criar a aula, verifique todos os campos');
+    }
+  }
+
   return (
     <div className={classes.root}>
       <Stepper activeStep={activeStep} alternativeLabel>
@@ -420,9 +471,24 @@ export default function Lessons() {
             </Button>
 
             {activeStep === steps.length - 2 && (
-              <Button type="submit" variant="contained" color="primary">
-                Finalizar
-              </Button>
+              <div>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSaveDraft}
+                >
+                  Salvar como rascunho
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled
+                >
+                  Finalizar
+                </Button>
+              </div>
             )}
             {activeStep !== steps.length - 2 && (
               <Button

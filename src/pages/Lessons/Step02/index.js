@@ -93,10 +93,10 @@ export default function Step02({
           <div className="left-column box">
             <h2>5. Imagens*</h2>
             <p>Adicione as imagens que serão utilizadas em sua aula</p>
-            <p className="bold">Imagens(mínimo de 10) e/ou GIFs</p>
+            <p className="bold">Imagens(mínimo de 5) e/ou GIFs</p>
           </div>
           <div className="center-column box">
-            {!!uploadedFiles.images.length < 10 && state.dropbox && (
+            {!!uploadedFiles.images.length < 5 && state.dropbox && (
               <Upload
                 onUpload={e => handleUpload(e, 'images')}
                 message="Clique ou arraste aqui para enviar"
