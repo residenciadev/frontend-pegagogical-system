@@ -269,7 +269,10 @@ const useStyles = makeStyles(theme => ({
     top: 20,
     width: 1,
   },
-
+  gray: {
+    background: '#A0A0A0',
+    color: '#fff',
+  },
   yellow: {
     background: '#ffc107',
     color: '#fff',
@@ -393,30 +396,27 @@ export default function EnhancedTable({ data: rows, loadData }) {
   const colorStatus = status => {
     if (status === 'waiting_for_the_pedagogical') {
       return 'yellow';
-    }
-    if (status === 'returned') {
+    } else if (status === 'returned') {
       return 'secodary';
-    }
-    if (status === 'revision') {
+    } else if (status === 'revision') {
       return 'primary';
-    }
-    if (status === 'finished') {
+    } else if (status === 'finished') {
       return 'green';
     }
-    return 'yellow';
+    return 'gray';
   };
 
   const correctStatus = status => {
+    if (status === 'draft') {
+      return 'Rascunho';
+    }
     if (status === 'waiting_for_the_pedagogical') {
       return 'Aguardando pedagógico';
-    }
-    if (status === 'returned') {
+    } else if (status === 'returned') {
       return 'devolvido para o prof.';
-    }
-    if (status === 'revision') {
+    } else if (status === 'revision') {
       return 'revisão';
-    }
-    if (status === 'finished') {
+    } else if (status === 'finished') {
       return 'finalizado';
     }
     return status;

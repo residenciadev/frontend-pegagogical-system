@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
 import { uniqueId } from 'lodash';
 import filesize from 'filesize';
@@ -50,6 +51,10 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-end',
     maxWidth: '1208px',
   },
+  btnSubmit: {
+    marginLeft: '10px',
+    boxShadow: 'none',
+  },
 }));
 
 function getSteps() {
@@ -67,6 +72,7 @@ export default function Lessons() {
   const [activeStep, setActiveStep] = useState(0);
   const profile = useSelector(state => state.user.profile);
   const loading = useSelector(state => state.user.loading);
+  const [saveLoading, setSaveLoading] = useState(false);
   const [values, setValues] = useState({
     theme: '',
     skills: '',
@@ -175,78 +181,6 @@ export default function Lessons() {
         [type]: removeValue,
       };
     });
-  }
-  async function handleSubmit(event) {
-    event.preventDefault();
-    try {
-      const module_id = modulesSelected.id;
-      const status = 'waiting_for_the_pedagogical';
-      const title = lessonSelected.value;
-      const { theme, skills, links } = values;
-      const {
-        slide,
-        materialComplementary,
-        images,
-        backgroundImages,
-        videos,
-      } = uploadedFiles;
-      const data = slide.concat(
-        materialComplementary,
-        images,
-        backgroundImages,
-        videos
-      );
-
-      const dropbox = data
-        .filter(element => element.id !== undefined)
-        .map(element => element.id);
-
-      if (activeStep === 1) {
-        if (
-          slide.length >= 1 &&
-          materialComplementary.length >= 1 &&
-          dropbox.length >= 5 &&
-          backgroundImages.length >= 1 &&
-          !!questions &&
-          !!answers
-        ) {
-          const responseLesson = await api.post('lessons', {
-            module_id,
-            status,
-            title,
-            theme,
-            skills,
-            slide: true,
-            material: true,
-            material_complementary: true,
-            images: true,
-            images_background: true,
-            video: true,
-            links,
-            dropbox,
-            questions,
-            answers,
-          });
-
-          toast.success(
-            'Aula criada com sucesso, aguarde a aprovação do pedagógico'
-          );
-
-          history.push('/');
-        } else {
-          setMessage(
-            'Você precisa preencher todos os campos !! Lembrando Imagens são no mínimo 5'
-          );
-
-          setTimeout(() => {
-            setMessage('');
-          }, 5000);
-          throw new Error('oops');
-        }
-      }
-    } catch (error) {
-      toast.error('Não foi possível criar a aula, verifique todos os campos');
-    }
   }
 
   function handleNext() {
@@ -396,6 +330,80 @@ export default function Lessons() {
     }
   }
 
+  async function handleSubmit(event) {
+    event.preventDefault();
+    try {
+      const module_id = modulesSelected.id;
+      const status = 'waiting_for_the_pedagogical';
+      const title = lessonSelected.value;
+      const { theme, skills, links } = values;
+      const {
+        slide,
+        materialComplementary,
+        images,
+        backgroundImages,
+        videos,
+      } = uploadedFiles;
+      const data = slide.concat(
+        materialComplementary,
+        images,
+        backgroundImages,
+        videos
+      );
+
+      const dropbox = data
+        .filter(element => element.id !== undefined)
+        .map(element => element.id);
+      setSaveLoading(true);
+      if (activeStep === 1) {
+        if (
+          slide.length >= 1 &&
+          materialComplementary.length >= 1 &&
+          dropbox.length >= 5 &&
+          backgroundImages.length >= 1 &&
+          !!questions &&
+          !!answers
+        ) {
+          await api.post('lessons', {
+            module_id,
+            status,
+            title,
+            theme,
+            skills,
+            slide: true,
+            material: true,
+            material_complementary: true,
+            images: true,
+            images_background: true,
+            video: true,
+            links,
+            dropbox,
+            questions,
+            answers,
+          });
+
+          toast.success(
+            'Aula criada com sucesso, aguarde a aprovação do pedagógico'
+          );
+
+          history.push('/');
+        } else {
+          setMessage(
+            'Você precisa preencher todos os campos !! Lembrando Imagens são no mínimo 5'
+          );
+
+          setTimeout(() => {
+            setMessage('');
+          }, 5000);
+          throw new Error('oops');
+        }
+      }
+    } catch (error) {
+      toast.error('Não foi possível criar a aula, verifique todos os campos');
+      setSaveLoading(false);
+    }
+  }
+
   async function handleSaveDraft(event) {
     event.preventDefault();
     try {
@@ -473,8 +481,8 @@ export default function Lessons() {
             {activeStep === steps.length - 2 && (
               <div>
                 <Button
-                  type="submit"
-                  variant="contained"
+                  type="button"
+                  variant="outlined"
                   color="primary"
                   onClick={handleSaveDraft}
                 >
@@ -484,9 +492,13 @@ export default function Lessons() {
                   type="submit"
                   variant="contained"
                   color="primary"
-                  disabled
+                  className={classes.btnSubmit}
                 >
-                  Finalizar
+                  {saveLoading ? (
+                    <CircularProgress size={24} color="inherit" />
+                  ) : (
+                    'Finalizar'
+                  )}
                 </Button>
               </div>
             )}
