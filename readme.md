@@ -1,8 +1,8 @@
 ### To do !
 
 [] modal to delete files
-[] status draft
+[x] status draft
 [] minimun images - 4
 [] filters -
-[] courses, table all finalized
-[] order notifications
+[x] courses, table all finalized
+[x] order notifications
