@@ -42,7 +42,8 @@ export function* forgotPassword({ payload }) {
 
     yield call(api.post, 'resetpassword', {
       email,
-      redirect_url: 'http://localhost:3000/resetpassword',
+      redirect_url:
+        'https://pedagogico.residenciaeducacao.com.br//resetpassword',
     });
     toast.success('Enviamos para seu e-mail um token de recuperação de senha!');
     history.push('/');
