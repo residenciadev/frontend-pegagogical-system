@@ -14,6 +14,7 @@ import Upload from '../../components/Upload';
 import FileList from '../../components/FileList';
 import correctUrl from '../../utils/correctUrl';
 import TextEditor from '../../components/TextEditor';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { Container } from './styles';
 import api from '../../services/api';
@@ -35,6 +36,7 @@ const useStyles = makeStyles(theme => ({
   },
   btnSubmit: {
     marginLeft: '10px',
+    boxShadow: 'none',
   },
   typographyH2: {
     fontSize: '20px',
@@ -46,6 +48,11 @@ const useStyles = makeStyles(theme => ({
   },
   color: {
     color: '#1f2224',
+  },
+  alert: {
+    marginRight: theme.spacing(2),
+    marginLeft: theme.spacing(2),
+    color: '#f50057',
   },
 }));
 
@@ -70,10 +77,11 @@ export default function EditLessons() {
     dropbox: true,
     linkexterno: false,
   });
-
+  const [saveLoading, setSaveLoading] = useState(false);
   const [questions, setQuestions] = useState('');
   const [answers, setAnswers] = useState('');
   const [isNotPedagogical, setIsNotPedagogical] = useState(false);
+  const [isTeacher, setIsTeacher] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState({
     slide: [],
     materialComplementary: [],
@@ -85,20 +93,29 @@ export default function EditLessons() {
   const [statusOptions, setStatusOptions] = useState([
     {
       value: 'waiting_for_the_pedagogical',
-      label: 'Aguardando Pedagógico',
-      disabled: false,
+      label: 'Enviar p/ o pedagógico',
+      isDisabled: false,
     },
-    { value: 'returned', label: 'Devolver para o prof.', disabled: false },
-    { value: 'revision', label: 'Enviar para revisão', disabled: false },
+    {
+      value: 'returned',
+      label: 'Devolver para o prof.',
+      isDisabled: false,
+    },
+    {
+      value: 'revision',
+      label: 'Enviar para revisão',
+      isDisabled: false,
+    },
   ]);
 
   const [statusSelected, setStatusSelected] = useState([
     {
       value: 'waiting_for_the_pedagogical',
-      label: 'Aguardando Pedagógico',
-      disabled: false,
+      label: 'Enviar p/ o pedagógico',
+      isDisabled: false,
     },
   ]);
+  const [message, setMessage] = useState('');
 
   const handleChange = name => event => {
     setValues({ ...values, [name]: event.target.value });
@@ -239,31 +256,119 @@ export default function EditLessons() {
     const dropbox = data
       .filter(element => element.id !== undefined)
       .map(element => element.id);
+
+    setSaveLoading(true);
     try {
-      await api.put(
-        `lessons/${lessonsId}/content/${contentId}?status=${selected ||
-          statusOptions[0].value}`,
-        {
-          theme,
-          skills,
-          material: true,
-          material_obs,
-          material_complementary: true,
-          material_complementary_obs,
-          questions,
-          questions_obs,
-          answers,
-          answers_obs,
-          links: values.links,
-          images: true,
-          images_obs,
-          images_background: true,
-          images_background_obs,
-          video: true,
-          video_obs,
-          dropbox,
-        }
+      if (
+        slide.length >= 1 &&
+        materialComplementary.length >= 1 &&
+        dropbox.length >= 5 &&
+        backgroundImages.length >= 1 &&
+        !!questions &&
+        !!answers
+      ) {
+        await api.put(
+          `lessons/${lessonsId}/content/${contentId}?status=${selected ||
+            statusOptions[0].value}`,
+          {
+            theme,
+            skills,
+            material: true,
+            material_obs,
+            material_complementary: true,
+            material_complementary_obs,
+            questions,
+            questions_obs,
+            answers,
+            answers_obs,
+            links: values.links,
+            images: true,
+            images_obs,
+            images_background: true,
+            images_background_obs,
+            video: true,
+            video_obs,
+            dropbox,
+          }
+        );
+
+        history.push('/');
+        toast.success(
+          'Aula editada com sucesso, aguarde a aprovação do pedagógico'
+        );
+      } else {
+        setMessage(
+          'Você precisa preencher todos os campos !! Lembrando Imagens são no mínimo 5'
+        );
+        setTimeout(() => {
+          setMessage('');
+        }, 5000);
+        throw new Error('oops');
+      }
+    } catch (error) {
+      toast.error(
+        'Não foi possível finalizar a aula, verifique se todos os campos foram preenchidos'
       );
+      setSaveLoading(false);
+    }
+  }
+
+  async function handleDraft(event) {
+    event.preventDefault();
+    const { id: lessonsId } = match.params;
+    const { id: contentId } = dataContent;
+    const {
+      theme,
+      skills,
+      material_obs,
+      material_complementary_obs,
+      images_obs,
+      images_background_obs,
+      video_obs,
+      questions_obs,
+      answers_obs,
+    } = values;
+
+    const {
+      slide,
+      materialComplementary,
+      images,
+      backgroundImages,
+      videos,
+    } = uploadedFiles;
+
+    const data = slide.concat(
+      materialComplementary,
+      images,
+      backgroundImages,
+      videos
+    );
+
+    const selected = statusSelected.value;
+    const dropbox = data
+      .filter(element => element.id !== undefined)
+      .map(element => element.id);
+    try {
+      await api.put(`lessons/${lessonsId}/content/${contentId}?status=draft`, {
+        theme,
+        skills,
+        material: true,
+        material_obs,
+        material_complementary: true,
+        material_complementary_obs,
+        questions,
+        questions_obs,
+        answers,
+        answers_obs,
+        links: values.links,
+        images: true,
+        images_obs,
+        images_background: true,
+        images_background_obs,
+        video: true,
+        video_obs,
+        dropbox,
+      });
       history.push('/');
       toast.success(
         'Aula editada com sucesso, aguarde a aprovação do pedagógico'
@@ -326,12 +431,17 @@ export default function EditLessons() {
       const answersParse = IsJsonString(response.data.answers)
         ? JSON.parse(response.data.answers)
         : response.data.answers;
-
-      setQuestions(
-        questionsParse.content ? questionsParse.content : questionsParse
-      );
-      setAnswers(answersParse.content ? answersParse.content : answersParse);
+      if (questionsParse) {
+        setQuestions(
+          questionsParse.content ? questionsParse.content : questionsParse
+        );
+      }
+      if (answersParse) {
+        setAnswers(answersParse.content ? answersParse.content : answersParse);
+      }
       setIsNotPedagogical(!(userType === 'pedagogical'));
+      setIsTeacher(userType === 'teacher');
+
       setLoading(false);
     }
     loadData(lessonsId);
@@ -384,7 +494,6 @@ export default function EditLessons() {
                     className={classes.textField}
                     placeholder="Digite o tema"
                     label="Tema"
-                    margin="normal"
                     variant="outlined"
                     inputProps={{ 'aria-label': 'bare' }}
                     rowsMax="1"
@@ -851,14 +960,30 @@ export default function EditLessons() {
               >
                 Cancelar
               </Button>
+              {isTeacher && (
+                <Button
+                  type="button"
+                  variant="outlined"
+                  color="default"
+                  className={classes.btnSubmit}
+                  onClick={handleDraft}
+                >
+                  Salvar como rascunho
+                </Button>
+              )}
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
                 className={classes.btnSubmit}
               >
-                Finalizar
+                {saveLoading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  'Finalizar'
+                )}
               </Button>
+              <span className={classes.alert}>{message}</span>
             </div>
           </form>
         )}
