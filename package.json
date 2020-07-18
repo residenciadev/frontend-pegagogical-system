@@ -17,7 +17,7 @@
     "filesize": "^4.2.0",
     "history": "^4.10.1",
     "immer": "^4.0.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
     "react-circular-progressbar": "^2.0.2",
