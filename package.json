@@ -16,7 +16,7 @@
     "draft-js": "^0.11.0",
     "filesize": "^4.2.0",
     "history": "^4.10.1",
-    "immer": "^4.0.0",
+    "immer": "^9.0.6",
     "lodash": "^4.17.15",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
